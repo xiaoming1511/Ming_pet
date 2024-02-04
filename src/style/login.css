@@ -1,0 +1,87 @@
+.wave {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  left: 0;
+  bottom: 0;
+  z-index: -1;
+  background: url(https://s11.ax1x.com/2024/01/11/pF9b7yd.jpg) no-repeat;
+  background-size: cover;
+}
+
+.login-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: content-box;
+}
+
+
+.login-box {
+  text-align: center;
+  background-color: rgba(255, 255, 255, .4);
+  backdrop-filter: blur(8px);
+}
+
+.login-form {
+  width: 360px;
+}
+
+.avatar {
+  width: 350px;
+  height: 80px;
+}
+
+.login-form h2 {
+  text-transform: uppercase;
+  margin: 15px 0;
+  color: #999;
+  font:
+    bold 200% Consolas,
+    Monaco,
+    monospace;
+}
+
+@media screen and (max-width: 1180px) {
+  .login-container {
+    grid-gap: 9rem;
+  }
+
+  .login-form {
+    width: 290px;
+  }
+
+  .login-form h2 {
+    font-size: 2.4rem;
+    margin: 8px 0;
+  }
+
+  .img img {
+    width: 360px;
+  }
+
+  .avatar {
+    width: 280px;
+    height: 80px;
+  }
+}
+
+@media screen and (max-width: 968px) {
+  .wave {
+    display: none;
+  }
+
+  .img {
+    display: none;
+  }
+
+  .login-container {
+    grid-template-columns: 1fr;
+  }
+
+  .login-box {
+    justify-content: center;
+  }
+}
