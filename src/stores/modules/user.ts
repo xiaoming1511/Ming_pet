@@ -1,17 +1,13 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 
-// import { LoginApi, getUserInfoApi, logoutApi } from "@/api/users/index.ts";
-
-// import { loginDataTs, loginResponseDataTs } from "@/api/users/type";
-// import type { UserStateTs } from "@/store/modules/types/type";
-
 export const useUserStore = defineStore("user", {
   // ref变量 → state 属性
   state: () => ({
     userInfo: null, // 用户信息
     token: "", // 认证令牌
   }),
+
   actions: {
     // 登录动作
     async login(credentials: { username: string; password: string }) {
@@ -20,8 +16,6 @@ export const useUserStore = defineStore("user", {
           "http://localhost:7777/user/login",
           credentials
         );
-        console.log(response);
-
         if (response.data.code == 200) {
           ElMessage({
             message: response.data.msg,
@@ -30,7 +24,7 @@ export const useUserStore = defineStore("user", {
         } else {
           ElMessage({
             message: response.data.msg,
-            type: 'warning',
+            type: "warning",
           });
         }
 

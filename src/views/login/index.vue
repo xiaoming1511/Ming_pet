@@ -50,12 +50,14 @@ import GlobalizationIcon from "@/assets/icons/globalization.svg?component";
 import logo from "@/assets/icons/block.svg?component";
 import type { FormRules } from 'element-plus'
 import { useUserStore } from '@/stores/modules/user';
+import { useRouter } from 'vue-router';
+
 
 const userStore = useUserStore();
 
-
 const value1 = ref(true)
 const { locale } = useI18n()
+const router = useRouter();
 
 
 // 更改语言
@@ -89,12 +91,11 @@ const login = async () => {
     try {
         await userStore.login({ username: userInfo.username, password: userInfo.password });
         // 登录成功后的逻辑，比如跳转到主页
+        router.push('/home')
     } catch (error) {
 
     }
 }
-
-
 
 </script>
 
