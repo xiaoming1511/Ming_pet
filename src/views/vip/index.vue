@@ -1,6 +1,6 @@
 <template>
     <div>
-        <n-button>Default</n-button>
+        VIP
     </div>
 </template>
 

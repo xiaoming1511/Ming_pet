@@ -31,6 +31,7 @@ export default defineConfig({
         "vue-router",
         "vuex",
         "@vueuse/head",
+        "pinia",
         {
           "naive-ui": [
             "useDialog",

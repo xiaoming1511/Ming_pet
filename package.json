@@ -10,12 +10,9 @@
   },
   "dependencies": {
     "@types/node": "^20.11.16",
-    "@unocss/preset-attributify": "^0.58.4",
-    "@unocss/preset-icons": "^0.58.4",
     "@vicons/ionicons5": "^0.12.0",
     "axios": "^1.6.7",
     "element-plus": "^2.5.3",
-    "js-yaml": "^4.1.0",
     "naive-ui": "^2.37.3",
     "pinia": "^2.1.7",
     "sass": "^1.70.0",
@@ -23,7 +20,6 @@
     "unocss": "^0.58.4",
     "unplugin-element-plus": "^0.8.0",
     "unplugin-vue-components": "^0.26.0",
-    "vite-plugin-yaml": "^1.0.5",
     "vue": "^3.3.11",
     "vue-i18n": "^9.9.0",
     "vue-router": "4"
@@ -31,7 +27,7 @@
   "devDependencies": {
     "@unocss/preset-uno": "^0.58.4",
     "@vitejs/plugin-vue": "^5.0.3",
-    "typescript": "^5.2.2",
+    "typescript": "^5.3.3",
     "unplugin-auto-import": "^0.17.5",
     "unplugin-icons": "^0.18.5",
     "vite": "^5.0.8",

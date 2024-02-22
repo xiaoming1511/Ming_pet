@@ -1,49 +1,20 @@
 <template>
     <div class="w-screen relative h-screen">
-        <n-layout has-sider class="flex-c">
-            <caidan></caidan>
-            <n-flex class="w-screen">
-                <navigator></navigator>
-                <n-flex class="box px-6" justify="space-around" size="large">
-                    <n-card class="rounded-xl" size="huge">
-                        <div class="panle">
-                            <div class="panle_title text-left pb-3">
-                                快捷入口
-                            </div>
-                            <div class="panle-content">
-                                <div class="chart">
-                                    <div class="quick-entry p-4">
-                                        <n-grid :x-gap="12" :y-gap="8" :cols="4">
-                                            <n-grid-item v-for="item in 8" class="flex flex-col items-center">
-                                                <n-icon size="40">
-                                                    <PetStore></PetStore>
-                                                </n-icon>
-                                                <span>{{ item }} 商店入口</span>
-                                            </n-grid-item>
-                                        </n-grid>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </n-card>
-                    <n-card class="rounded-xl" size="huge">
-                        <div>
-                            2
-                        </div>
-                    </n-card>
-                    <n-card class="rounded-xl" size="huge">
-                        <div>
-                            3
-                        </div>
-                    </n-card>
+        <transition name="slide">
+            <n-layout has-sider class="flex-c">
+                <Menu class="relative fixed-menu"></Menu>
+                <n-flex class="w-screen">
+                    <navigator></navigator>
+                    <router-view></router-view>
                 </n-flex>
-            </n-flex>
-        </n-layout>
+            </n-layout>
+        </transition>
     </div>
 </template>
 
 <script setup lang="ts">
-import PetStore from "@/assets/icons/pet-store.svg?component";
+// 假设侧边栏初始为展开状态
+
 </script>
 
 <style scoped>
@@ -51,10 +22,23 @@ import PetStore from "@/assets/icons/pet-store.svg?component";
 
 :deep(.n-flex) {
     display: block !important;
+    margin-left: 210px;
+}
+
+:deep(.n-card__content) {
+    padding: 1.25rem !important;
 }
 
 :deep(.box) {
     display: flex !important;
     flex-wrap: nowrap !important;
+}
+
+.fixed-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
 }
 </style>

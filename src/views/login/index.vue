@@ -91,7 +91,7 @@ const login = async () => {
     try {
         await userStore.login({ username: userInfo.username, password: userInfo.password });
         // 登录成功后的逻辑，比如跳转到主页
-        router.push('/home')
+        router.push('/dashboard')
     } catch (error) {
 
     }
