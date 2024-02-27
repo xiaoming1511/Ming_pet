@@ -1,13 +1,13 @@
 <template>
     <div>
-        Digital
+        <test></test>
     </div>
 </template>
 
 <script setup lang="ts">
 
+
+
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

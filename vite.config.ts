@@ -20,7 +20,6 @@ import svgLoader from "vite-svg-loader";
 export default defineConfig({
   plugins: [
     vue(),
-    // yaml(),
     UnoCSS({
       // 可以在代码中使用Tailwind CSS、Windi CSS、Bootstrap、Tachyons等插件的快捷类
       presets: [presetUno(), presetAttributify(), presetIcons()],
@@ -50,6 +49,7 @@ export default defineConfig({
         NaiveUiResolver(),
         IconsResolver({
           prefix: "Icon",
+
         }),
       ],
       dts: path.resolve("src", "types", "components.d.ts"),

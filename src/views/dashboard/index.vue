@@ -29,7 +29,7 @@
             </n-card>
             <n-card class="rounded-xl" size="huge">
                 <div>
-                    订单数据
+                    <test></test>
                 </div>
             </n-card>
         </n-flex>

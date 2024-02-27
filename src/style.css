@@ -75,3 +75,27 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* 自定义滚动条样式 */
+::-webkit-scrollbar {
+  width: 10px; /* 或你想要的宽度 */
+  height: 10px; /* 或你想要的高度 */
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* 轨道颜色 */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888; /* 滑块颜色 */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* 滑块悬停时的颜色 */
+}
+
+/* 如果你还想要为火狐浏览器设置滚动条样式 */
+* {
+  scrollbar-width: thin; /* 'auto' 或 'thin' */
+  scrollbar-color: #888 #f1f1f1; /* 滑块颜色 轨道颜色 */
+}

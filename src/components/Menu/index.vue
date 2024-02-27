@@ -1,9 +1,10 @@
 <template>
     <n-space vertical size="large" class="h-screen">
         <n-layout has-sider>
-            <n-layout-sider bordered show-trigger collapse-mode="width" :collapsed-width="64" :width="210">
-                <n-menu class="text-left" :collapsed-width="64" :collapsed-icon-size="22" :options="menuOptions"
-                    @update:value="handleMenuSelect" />
+            <n-layout-sider bordered collapse-mode="width" :collapsed="sidebarStore.isSidebarExpanded" :collapsed-width="64"
+                :width="sidebarStore.sidebarWidth">
+                <n-menu class="text-left h-screen overflow-y-auto" :collapsed-width="64" :collapsed-icon-size="26"
+                    :options="menuOptions" @update:value="handleMenuSelect" />
             </n-layout-sider>
         </n-layout>
     </n-space>
@@ -11,18 +12,11 @@
 
 <script setup lang="ts">
 import { NIcon } from 'naive-ui'
-import Home from "@/assets/icons/shouye.svg?component";
-import Order from "@/assets/icons/dingdan.svg?component";
-import Pet from "@/assets/icons/pet.svg?component";
-import VIP from "@/assets/icons/huiyuanzhongxin.svg?component";
-import Inventory from "@/assets/icons/kucun.svg?component";
-import Workers from "@/assets/icons/shuju.svg?component";
-import Digital from "@/assets/icons/qushi.svg?component";
 import { RouterLink } from 'vue-router';
-import { h, Component } from 'vue';
 
-
+import { useSidebarStore } from '@/stores/modules/sidebar';
 const router = useRouter();
+const sidebarStore = useSidebarStore();
 
 // 路由跳转
 function handleMenuSelect(key: string) {
@@ -33,9 +27,11 @@ function handleMenuSelect(key: string) {
     }
 }
 
-function renderIcon(icon: Component) {
-    return () => h(NIcon, null, { default: () => h(icon) })
+function renderIcon(_name: string) {
+    // 仅用于测试，直接返回一个已知的图标组件
+    return () => h(NIcon, null, { default: () => h('IconShouye') });
 }
+
 const menuOptions = [
     {
         label: () =>
@@ -49,12 +45,12 @@ const menuOptions = [
                 { default: () => '首页' }
             ),
         key: 'Home',
-        icon: renderIcon(Home)
+        icon: () => h('IconShouye'),
     },
     {
         label: '商品服务',
         key: 'goods',
-        icon: renderIcon(Inventory),
+        icon: renderIcon('kucun'),
         children: [
             {
                 label: () =>
@@ -68,7 +64,7 @@ const menuOptions = [
                         { default: () => '商品管理' }
                     ),
                 key: 'List',
-                icon: renderIcon(Order),
+                icon: renderIcon('dingdan'),
             },
             {
                 label: () =>
@@ -82,7 +78,7 @@ const menuOptions = [
                         { default: () => '商品记录' }
                     ),
                 key: 'Record',
-                icon: renderIcon(Order),
+                icon: renderIcon('dingdan'),
             },
             {
                 label: () =>
@@ -96,8 +92,8 @@ const menuOptions = [
                         { default: () => '服务管理' }
                     ),
                 key: 'Service',
-                icon: renderIcon(Order),
-            }
+                icon: renderIcon('dingdan'),
+            },
         ]
     },
     {
@@ -112,12 +108,12 @@ const menuOptions = [
                 { default: () => '订单管理' }
             ),
         key: 'Order',
-        icon: renderIcon(Order),
+        icon: renderIcon('dingdan'),
     },
     {
         label: '宠物管理',
         key: 'pet',
-        icon: renderIcon(Pet),
+        icon: renderIcon('pet'),
         children: [
             {
                 label: () =>
@@ -131,7 +127,7 @@ const menuOptions = [
                         { default: () => '宠物列表' }
                     ),
                 key: 'PetList',
-                icon: renderIcon(Order)
+                icon: renderIcon('dingdan')
             },
             {
                 label: () =>
@@ -145,30 +141,29 @@ const menuOptions = [
                         { default: () => '宠物提醒' }
                     ),
                 key: 'PetWarning',
-                icon: renderIcon(Order)
+                icon: renderIcon('dingdan')
             }
         ]
     },
     {
         label: '会员管理',
         key: 'VIP',
-        icon: renderIcon(VIP),
+        icon: renderIcon('huiyuanzhongxin'),
     },
     {
         label: '店员管理',
         key: 'Workers',
-        icon: renderIcon(Workers),
+        icon: renderIcon('shuju'),
     },
     {
         label: '数据中心',
         key: 'Digital',
-        icon: renderIcon(Digital),
+        icon: renderIcon('qushi'),
     },
 ]
+
 </script>
 
 <style scoped>
-:deep(.n-base-icon) {
-    z-index: 1000;
-}
+
 </style>

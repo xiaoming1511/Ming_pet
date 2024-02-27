@@ -1,28 +1,32 @@
 <template>
-    <div class="w-screen relative h-screen">
+    <div class="w-screen h-screen box-border">
         <transition name="slide">
-            <n-layout has-sider class="flex-c">
+            <div class="w-full h-full">
                 <Menu class="relative fixed-menu"></Menu>
-                <n-flex class="w-screen">
-                    <navigator></navigator>
-                    <router-view></router-view>
+                <Navigator class="navigation-bar box-border"
+                    :style="{ paddingLeft: sidebarStore.isSidebarExpanded ? `104px` : '250px' }"></Navigator>
+                <n-flex class="hmain" :style="{ marginLeft: sidebarStore.isSidebarExpanded ? `64px` : '210px' }">
+                    <router-view class="bg-gray-100 pt-5"></router-view>
                 </n-flex>
-            </n-layout>
+            </div>
         </transition>
     </div>
 </template>
 
 <script setup lang="ts">
-// 假设侧边栏初始为展开状态
+import { useSidebarStore } from '@/stores/modules/sidebar';
+
+const sidebarStore = useSidebarStore();
 
 </script>
 
 <style scoped>
 @import '@/style/login.css';
 
-:deep(.n-flex) {
+.hmain {
     display: block !important;
-    margin-left: 210px;
+    transition: margin-left 0.4s ease;
+    padding-top: 64px;
 }
 
 :deep(.n-card__content) {
@@ -39,6 +43,15 @@
     top: 0;
     left: 0;
     height: 100vh;
+    z-index: 1001;
+}
+
+.navigation-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
     z-index: 1000;
+    transition: padding-left 0.4s ease;
 }
 </style>

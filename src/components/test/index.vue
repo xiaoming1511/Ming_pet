@@ -1,30 +1,44 @@
 <template>
-  <div>
-    <n-space vertical size="large">
-      <n-layout has-sider>
-        <n-layout-sider collapse-mode="width" :collapsed-width="120" :width="240" show-trigger="arrow-circle"
-          content-style="padding: 24px;" bordered>
-
-        </n-layout-sider>
-        <n-layout-content content-style="padding: 24px;">
-          平山道
-        </n-layout-content>
-      </n-layout>
-      <n-layout has-sider>
-        <n-layout-sider collapse-mode="transform" :collapsed-width="120" :width="240" show-trigger="bar"
-          content-style="padding: 24px;" bordered>
-          <n-h2>海淀桥</n-h2>
-        </n-layout-sider>
-        <n-layout-content content-style="padding: 24px;">
-          平山道
-        </n-layout-content>
-      </n-layout>
-    </n-space>
-  </div>
+  <div ref="chartContainer"></div>
 </template>
 
 <script setup lang="ts">
+import { Chart } from '@antv/g2';
 
+// 将图标组件注册为局部组件
+
+
+const chartContainer = ref<HTMLElement | null>(null);
+
+onMounted(() => {
+  if (chartContainer.value) {
+    const chart = new Chart({
+      container: chartContainer.value,
+      width: 600,
+      height: 300,
+    });
+
+    // 定义数据
+    const data = [
+      { genre: 'Sports', sold: 275 },
+      { genre: 'Strategy', sold: 115 },
+      { genre: 'Action', sold: 120 },
+      { genre: 'Shooter', sold: 350 },
+      { genre: 'Other', sold: 150 },
+    ];
+
+    // 定义图表
+    // 声明可视化
+    chart
+      .interval() // 创建一个 Interval 标记
+      .data(data) // 绑定数据
+      .encode('x', 'genre') // 编码 x 通道
+      .encode('y', 'sold'); // 编码 y 通道
+    chart.render();
+  }
+});
 </script>
 
-<style scoped></style>
+<style scoped>
+/* 你的样式 */
+</style>
