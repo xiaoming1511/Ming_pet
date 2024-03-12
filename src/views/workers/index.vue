@@ -29,11 +29,55 @@
                 </n-button>
             </template>
         </SearchBar>
-        <Table></Table>
+        <Table :columns="columns" :data="employeeList"></Table>
     </div>
 </template>
 
 <script setup lang="ts">
+import { useemployeeStore } from '@/stores/modules/employee';
+
+const employeeStore = useemployeeStore();
+const employeeList = ref([]);
+
+const columns = ref([
+    {
+        title: 'Id',
+        key: 'employeeId'
+    },
+    {
+        title: '姓名',
+        key: 'employeeName'
+    },
+    {
+        title: '电话',
+        key: 'employeePhone'
+    },
+    {
+        title: '邮箱',
+        key: 'employeeEmail'
+    },
+    {
+        title: '地址',
+        key: 'employeePosition'
+    },
+    {
+        title: '入职时间',
+        key: 'hireDate'
+    },
+    {
+        title: '状态',
+        key: 'status'
+    },
+    {
+        title: '创建时间',
+        key: 'createdAt'
+    }
+]);
+
+onMounted(async () => {
+    await employeeStore.fetchemployee();
+    employeeList.value = employeeStore.employee
+})
 
 </script>
 

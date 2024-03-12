@@ -3,7 +3,8 @@
         <n-flex class="gap">
             <div class="service-l min-w-60 bg-white rounded-xl p-x5">
                 <div class="header-title">服务类型</div>
-                <n-menu :options="menuOptions" class="bg-gray-100 m-4 rounded-2xl" />
+                <n-menu :options="servicesTypeList" class="bg-gray-100 m-4 rounded-2xl" @update:value="handleMenuSelect"
+                    v-model:value="selectedKey" />
             </div>
 
             <div class="service-r flex-auto bg-white rounded-xl">
@@ -18,10 +19,10 @@
                     <n-flex class="card-block ">
                         <div
                             class="flex items-center flex-col bg-gray-100 rounded-2xl p-5 mx-5 min-w-sm max-h-lg overflow-hidden overflow-y-auto">
-                            <n-card hoverable class="box-border mb-5 rounded-2xl" v-for="item in 6">
+                            <n-card hoverable class="box-border mb-5 rounded-2xl" v-for="item in servicesList">
                                 <n-flex justify="space-between" class="items-center w-full">
                                     <div>
-                                        犬类洗剪吹{{ item }}
+                                        {{ item.serviceName }}
                                     </div>
                                     <div class="flex gap-4">
                                         <n-button>Oops!</n-button>
@@ -38,26 +39,44 @@
 </template>
 
 <script setup lang="ts">
+import { useServicesStore } from '@/stores/modules/services';
 
-const menuOptions = [
-    {
-        label: '洗澡',
-        key: 'washing'
-    },
-    {
-        label: '美容',
-        key: 'beauty'
-    },
-    {
-        label: '寄养',
-        key: 'foster-care'
-    },
-    {
-        label: '其他',
-        key: 'other'
-    },
+const servicesStore = useServicesStore();
 
-];
+const servicesList = computed(() => servicesStore.servicesList);
+const servicesTypeList = computed(() =>
+    servicesStore.servicesTypeList.map(serviceType => ({
+        label: serviceType.serviceTypeName,
+        key: serviceType.serviceTypeId,
+    }))
+);
+const selectedKey = ref();
+
+// 加载初始数据的函数
+const loadData = async () => {
+    if (!servicesStore.selectedServiceTypeId && servicesTypeList.value.length > 0) {
+        // Initialize selected key if not set
+        selectedKey.value = servicesTypeList.value[0].key;
+    }
+    await servicesStore.fetchServicesTypeList();
+
+    selectedKey.value = servicesStore.selectedServiceTypeId
+    
+    if (selectedKey.value) {
+        await servicesStore.fetchServicesList(selectedKey.value);
+    }
+};
+
+// 处理菜单选择
+const handleMenuSelect = async (key) => {
+    // 根据选择的服务类型加载对应的服务列表
+    selectedKey.value = key; // Update the selected key
+    await servicesStore.fetchServicesList(key);
+};
+
+onMounted(async () => {
+    await loadData();
+});
 
 </script>
 

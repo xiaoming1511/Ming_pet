@@ -1,7 +1,6 @@
 import axios, { InternalAxiosRequestConfig, AxiosResponse } from "axios";
 import { ElMessage } from "element-plus";
 import { env } from "process";
-// import { useUserStoreHook } from "@/store/modules/user";
 
 interface Result {
   code: number;
@@ -29,7 +28,7 @@ const http = axios.create({
 http.interceptors.request.use(
   (config) => {
     // 一般在这个位置判断token是否存在
-    console.log(config + "11");
+    // console.log(config + "token存在");
     return config;
   },
   (error: any) => {

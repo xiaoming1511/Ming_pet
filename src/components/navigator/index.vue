@@ -20,7 +20,7 @@
                 <n-avatar round size="large" src="https://s11.ax1x.com/2024/02/05/pFlTtZn.jpg" />
             </n-dropdown>
         </n-space>
-        
+
     </div>
 </template>
 
@@ -46,22 +46,17 @@ const options = [
     }
 ]
 
-// const icons = [
-//     {
-//         icon: renderIcon(Sous)
-//     },
-//     {
-//         icon: renderIcon(Xinxi)
-//     },
-//     {
-//         icon: renderIcon(Qianb)
-//     }
-// ]
-
 const sidebarStore = useSidebarStore();
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 @import '@/style/login.css';
+
+.n-icon-slot {
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+}
 </style>

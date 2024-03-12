@@ -10,18 +10,12 @@
                     </template>
                 </n-input>
             </template>
+
             <template #search-controls>
                 <n-date-picker type="daterange" :is-date-disabled="disablePreviousDate" />
             </template>
+
             <template #search-actions>
-                <n-button class="mr-4" text quaternary :focusable="false">
-                    <template #icon>
-                        <n-icon>
-                            <IconAdd></IconAdd>
-                        </n-icon>
-                    </template>
-                    <span>添加</span>
-                </n-button>
                 <n-button round color="#fdda11" text-color="#000" :focusable="false">
                     <template #icon>
                         <n-icon>
@@ -32,15 +26,48 @@
                 </n-button>
             </template>
         </SearchBar>
-        <Table></Table>
+        <Table :columns="columns" :data="recordsList"></Table>
     </div>
 </template>
 
 <script setup lang="ts">
+import { useRecordsStore } from '@/stores/modules/records';
+
+const recordsStore = useRecordsStore();
+const recordsList = ref([])
+
+const columns = ref([
+    {
+        title: 'Id',
+        key: 'recordId'
+    },
+    {
+        title: '操作记录',
+        key: 'typeName'
+    },
+    {
+        title: '商品名称',
+        key: 'productName'
+    },
+    {
+        title: '操作人',
+        key: 'employeeName'
+    },
+    {
+        title: '操作时间',
+        key: 'changedAt'
+    }
+]);
 
 function disablePreviousDate(ts: number) {
     return ts > Date.now()
 }
+
+onMounted(async () => {
+    await recordsStore.fetchRecords();
+    recordsList.value = recordsStore.records;
+    //   console.log(recordsList);
+});
 </script>
 
 <style scoped></style>

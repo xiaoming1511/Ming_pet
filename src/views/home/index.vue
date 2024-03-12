@@ -1,15 +1,23 @@
 <template>
     <div class="w-screen h-screen box-border">
-        <transition name="slide">
-            <div class="w-full h-full">
-                <Menu class="relative fixed-menu"></Menu>
-                <Navigator class="navigation-bar box-border"
-                    :style="{ paddingLeft: sidebarStore.isSidebarExpanded ? `104px` : '250px' }"></Navigator>
-                <n-flex class="hmain" :style="{ marginLeft: sidebarStore.isSidebarExpanded ? `64px` : '210px' }">
-                    <router-view class="bg-gray-100 pt-5"></router-view>
-                </n-flex>
-            </div>
-        </transition>
+        <n-message-provider>
+            <n-modal-provider>
+                <n-dialog-provider>
+                    <transition name="slide">
+                        <div class="w-full h-full">
+                            <Menu class="relative fixed-menu"></Menu>
+                            <Navigator class="navigation-bar box-border"
+                                :style="{ paddingLeft: sidebarStore.isSidebarExpanded ? `104px` : '250px' }">
+                            </Navigator>
+                            <n-flex class="hmain"
+                                :style="{ marginLeft: sidebarStore.isSidebarExpanded ? `64px` : '210px' }">
+                                <router-view class="bg-gray-100 pt-5"></router-view>
+                            </n-flex>
+                        </div>
+                    </transition>
+                </n-dialog-provider>
+            </n-modal-provider>
+        </n-message-provider>
     </div>
 </template>
 

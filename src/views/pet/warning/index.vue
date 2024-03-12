@@ -4,29 +4,29 @@
             <h3>活体提醒</h3>
             <n-grid x-gap="12" :cols="2" class="p-5">
                 <n-gi>
-                    <calendar class="shadow-lg p-3 rounded-2xl h-md"></calendar>
+                    <calendar class="shadow-lg p-3 rounded-2xl"></calendar>
                 </n-gi>
                 <n-gi class="shadow-xl p-3 rounded-2xl">
                     <div class="text-left text-xl font-bold border-b pb-4 mb-3">
-                        <h2>提醒详情（<span>{{ 3 }}</span>）
+                        <h2>提醒详情（<span>{{ petServiceListLength }}</span>）
                         </h2>
                     </div>
                     <n-flex class="overflow-hidden overflow-y-auto max-h-md gap">
-                        <n-list hoverable clickable class="border-b w-full rounded-2xl" v-for="item in 6">
+                        <n-list hoverable clickable class="border-b w-full rounded-2xl" v-for="item in petServiceList">
                             <n-list-item class="text-left">
-                                <n-thing content-style="margin-top: 0px;">
+                                <n-thing content-style="margin-top: 0px;display: flex;gap: .5rem;">
                                     <template #description>
                                         <n-space class="h-20 flex items-center">
                                             <n-avatar round size="large"
                                                 src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg" />
                                             <n-flex vertical>
                                                 <div class="flex items-center gap-4">
-                                                    <span class="text-base">小电臀{{ item }}</span>
+                                                    <span class="text-base">{{ item.petName }}</span>
                                                     <n-icon size="17">
                                                         <iconAdd></iconAdd>
                                                     </n-icon>
                                                     <n-tag round :bordered="false">
-                                                        Checked
+                                                        品种
                                                         <template #icon>
                                                             <n-icon>
                                                                 <iconAdd></iconAdd>
@@ -36,13 +36,21 @@
                                                 </div>
                                                 <div>
                                                     <span class="text-pink-900">
-                                                        距离生日还有{{ 1 }}天
+                                                        距离生日还有{{ item.serviceDate }}天
                                                     </span>
                                                 </div>
                                             </n-flex>
                                         </n-space>
                                     </template>
-                                    奋勇呀然后休息呀
+                                    <n-tag type="success">
+                                        {{ item.serviceTypeName }}
+                                    </n-tag>
+                                    <n-tag type="success">
+                                        {{ item.serviceName }}
+                                    </n-tag>
+                                    <n-tag type="success">
+                                        {{ item.pricingName }}
+                                    </n-tag>
                                 </n-thing>
                             </n-list-item>
                         </n-list>
@@ -54,8 +62,18 @@
 </template>
 
 <script setup lang="ts">
+import { usePetsStore } from '@/stores/modules/pets';
+
+const petStore = usePetsStore();
+const petServiceList = ref([])
+const petServiceListLength = ref(0);
 
 
+onMounted(async () => {
+    await petStore.fetchpetsService()
+    petServiceList.value = petStore.petsService
+    petServiceListLength.value = petServiceList.value.length
+})
 </script>
 
 <style scoped>

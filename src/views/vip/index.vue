@@ -33,14 +33,50 @@
                 </n-button>
             </template>
         </SearchBar>
-        <Table></Table>
+        <Table :columns="columns" :data="customersList"></Table>
     </div>
 </template>
 
 <script setup lang="ts">
+import { usecustomersStore } from '@/stores/modules/customers';
+
+const customersStore = usecustomersStore();
+const customersList = ref();
+
+const columns = ref([
+    {
+        title: 'Id',
+        key: 'customerId'
+    },
+    {
+        title: '姓名',
+        key: 'customerName'
+    },
+    {
+        title: '电话',
+        key: 'customerNumber'
+    },
+    {
+        title: '邮箱',
+        key: 'customerEmail'
+    },
+    {
+        title: '地址',
+        key: 'customerAddress'
+    },
+    {
+        title: '创建时间',
+        key: 'createdAt'
+    }
+]);
+
 const disablePreviousDate = (ts: number) => {
     return ts > Date.now()
 }
+onMounted(async () => {
+    await customersStore.fetchcustomers();
+    customersList.value = customersStore.customers
+})
 </script>
 
 <style scoped></style>

@@ -18,6 +18,7 @@ import svgLoader from "vite-svg-loader";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  server:{ host: '127.0.0.1', port: 3000 },
   plugins: [
     vue(),
     UnoCSS({
