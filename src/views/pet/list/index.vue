@@ -43,6 +43,26 @@ const selectedValue = ref(null)
 const showDialog = useDialog();
 const modal = useModal();
 
+const breed = ref([
+    {
+        label: 'Dog',
+        value: 'dog'
+    },
+    {
+        label: 'Cat',
+        value: 'cat'
+    },
+])
+const gender = ref([
+    {
+        label: '弟弟',
+        value: 'GG'
+    },
+    {
+        label: '妹妹',
+        value: 'MM'
+    },
+])
 const options = [
     {
         label: 'Drive My Car',

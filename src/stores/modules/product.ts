@@ -42,7 +42,7 @@ export const useProductStore = defineStore("product", {
         console.error("Delete operation failed:", error);
       }
     },
-    async updateProductItem(productId,productData) {
+    async updateProductItem(productId,productData) {    
       try {
         const response = await productService.upDateProduct(
           productId,

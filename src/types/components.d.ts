@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AddModal: typeof import('./../components/addModal/index.vue')['default']
     Calendar: typeof import('./../components/calendar/index.vue')['default']
     EditModal: typeof import('./../components/editModal/index.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
@@ -87,12 +88,13 @@ declare module 'vue' {
     NSlider: typeof import('naive-ui')['NSlider']
     NSpace: typeof import('naive-ui')['NSpace']
     NSwitch: typeof import('naive-ui')['NSwitch']
+    NTable: typeof import('naive-ui')['NTable']
     NTag: typeof import('naive-ui')['NTag']
     NThing: typeof import('naive-ui')['NThing']
     NTimePicker: typeof import('naive-ui')['NTimePicker']
     NTransfer: typeof import('naive-ui')['NTransfer']
     NUpload: typeof import('naive-ui')['NUpload']
-    ProductAdd: typeof import('./../components/addModal/productAdd.vue')['default']
+    ProductAdd: typeof import('../components/addModal/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SearchBar: typeof import('./../components/searchBar/index.vue')['default']
