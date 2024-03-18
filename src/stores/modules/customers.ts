@@ -14,11 +14,24 @@ export const usecustomersStore = defineStore("customers", {
   actions: {
     async fetchcustomers() {
       try {
-        const response = await customersService.getcustomersList();
+        const response = await customersService.getCustomersList();
         this.customers = response.data;
       } catch (error) {
         console.error("Failed to fetch customers:", error);
       }
+    },
+    async addCustomersItem(CustomersDate) {
+      const request = await customersService.addCustomersItem(CustomersDate);
+    },
+    async upDateCustomersItem(customersId, CustomersDate) {
+      const request = await customersService.upDateCustomersItem(
+        customersId,
+        CustomersDate
+      );
+      console.log(request);
+    },
+    async deleteCustomersItem(customersId) {
+      const request = await customersService.deleteCustomersItem(customersId);
     },
   },
 });

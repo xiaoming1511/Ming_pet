@@ -74,7 +74,7 @@ export const useServicesStore = defineStore("services", {
         console.error(error);
       }
     },
-    async addPricingItem(serviceData) {     
+    async addPricingItem(serviceData) {
       const request = await servicesService.addPricing(serviceData.pricing);
       console.log(request);
     },

@@ -51,9 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import { useProductStore } from '@/stores/modules/product';
 import { usePublicStore } from '@/stores/public';
-const productStore = useProductStore()
 const publicStore = usePublicStore();
 
 const bodyStyle = ref({

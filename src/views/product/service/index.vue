@@ -215,12 +215,12 @@ const editHandleClose = () => {
 const editHandleSubmit = async () => {
     const updatedPricing = pricingItems.value.map(item => ({
         ...item,
+        servicesId: itemInfo.value.serviceId,
         originalPrice: Number(item.originalPrice), // 转换为数字
         memberPrice: Number(item.memberPrice) // 转换为数字
     }));
 
     const serviceData = {
-        serviceName: itemInfo.value.serviceName,
         pricing: updatedPricing,
     };
 

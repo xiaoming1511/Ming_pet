@@ -7,6 +7,12 @@ class petsService {
   getpetsServiceList() {
     return http.get("/petServices");
   }
+  addPet(petDate) {
+    return http.post("pets/add", petDate);
+  }
+  updatePetsInfo(petId, petDate) {
+    return http.put(`pets/update/${petId}`, petDate);
+  }
 }
 
 export default new petsService();

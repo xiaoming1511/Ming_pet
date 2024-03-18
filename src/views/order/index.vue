@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import { useOrdersStore } from '@/stores/modules/orders';
-import { NAvatarGroup, NAvatar } from "naive-ui"
+import { NAvatarGroup, NAvatar, NButton } from "naive-ui"
 const ordersStore = useOrdersStore()
 const ordersList = ref([])
 
@@ -73,6 +73,30 @@ const columns = ref([
     {
         title: '操作时间',
         key: 'createdAt'
+    },
+    {
+        title: '操作',
+        key: 'actions',
+        render(row) {
+            return [
+                h(
+                    NButton,
+                    {
+                        strong: true,
+                        tertiary: true,
+                        size: 'small',
+                        onClick: () => handleEdit(row)
+                    },
+                    { default: () => 'Edit' }
+                ),
+                h(NButton, {
+                    strong: true,
+                    tertiary: true,
+                    size: 'small',
+                    onClick: () => showDeleteConfirm(row)
+                }, { default: () => 'Delete' })
+            ]
+        },
     }
 ]);
 

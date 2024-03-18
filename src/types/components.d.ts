@@ -39,6 +39,7 @@ declare module 'vue' {
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTimePicker: typeof import('element-plus/es')['ElTimePicker']
     Menu: typeof import('./../components/Menu/index.vue')['default']
+    Modal: typeof import('./../components/Modal/index.vue')['default']
     NAffix: typeof import('naive-ui')['NAffix']
     NAnchor: typeof import('naive-ui')['NAnchor']
     NAnchorLink: typeof import('naive-ui')['NAnchorLink']

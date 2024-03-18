@@ -30,5 +30,11 @@ export const usePetsStore = defineStore("pets", {
         console.error("Failed to fetch petsService:", error);
       }
     },
+    async addPet(petDate) {
+      const request = await petService.addPet(petDate);
+    },
+    async updatePet(petId, petDate) {
+      const request = await petService.updatePetsInfo(petId, petDate);
+    },
   },
 });

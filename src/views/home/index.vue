@@ -1,5 +1,5 @@
 <template>
-    <div class="w-screen h-screen box-border">
+    <div class="w-screen h-screen box-border table-container">
         <n-message-provider>
             <n-modal-provider>
                 <n-dialog-provider>
@@ -45,6 +45,7 @@ const sidebarStore = useSidebarStore();
     display: flex !important;
     flex-wrap: nowrap !important;
 }
+
 .fixed-menu {
     position: fixed;
     top: 0;
@@ -61,9 +62,9 @@ const sidebarStore = useSidebarStore();
     z-index: 1000;
     transition: padding-left 0.4s ease;
 }
-
-/* :deep(.n-dialog.n-modal) {
-  width: auto !important; 
-  max-width: calc(100vw - 32px); 
-} */
+/* 解决滚动条超出 */
+.table-container {
+  overflow-y: overlay;
+  overflow-x: auto;
+}
 </style>

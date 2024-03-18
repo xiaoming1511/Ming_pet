@@ -20,5 +20,14 @@ export const useemployeeStore = defineStore("employee", {
         console.error("Failed to fetch employee:", error);
       }
     },
+    async addEmployee(EmployeeDate) {
+      const request = await employeeService.addEmployee(EmployeeDate);
+    },
+    async updateEmployeeInfo(id, EmployeeDate) {
+      const request = await employeeService.updateEmployee(id, EmployeeDate);
+    },
+    async deleteEmployeeInfo(id) {
+      const request = await employeeService.deleteEmployee(id);
+    },
   },
 });
