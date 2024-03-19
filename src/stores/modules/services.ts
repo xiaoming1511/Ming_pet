@@ -75,8 +75,8 @@ export const useServicesStore = defineStore("services", {
       }
     },
     async addPricingItem(serviceData) {
-      const request = await servicesService.addPricing(serviceData.pricing);
+      const request = await servicesService.addPricing(serviceData);
       console.log(request);
-    },
+    }
   },
 });

@@ -35,21 +35,23 @@
                 </n-space>
             </div>
         </n-flex>
-        <AddModal>
+        <Modal>
             <template #header>
-                <div>添加服务信息</div>
+                <div>{{ publicStore.modalTitle }}</div>
             </template>
             <template #form-content>
                 <div>
                     <n-form-item label="服务名称：" path="productName">
-                        <n-input v-model:value="serviceName" placeholder="请输入服务名称" />
+                        <n-input v-model:value="publicStore.itemList.serviceName" placeholder="请输入服务名称" />
                     </n-form-item>
                     <n-form-item v-for="(item, index) in dynamicForm.hobbies" :key="`hobby-${index}`"
                         :label="`价目表${index + 1}`" :path="`hobbies[${index}].hobby`">
-                        <n-input v-model:value="item.name" clearable placeholder="名称：例如小型犬洗澡" />
-                        <n-input v-model:value="item.originalPrice" clearable placeholder="原价" />
-                        <n-input v-model:value="item.memberPrice" clearable placeholder="会员价" />
-                        <n-button style="margin-left: 12px" @click="addremoveItem(index)">
+                        <n-input v-model:value="item.pricingName" clearable placeholder="名称：例如小型犬洗澡" />
+                        <n-input-number v-model:value="item.originalPrice" clearable placeholder="原价"
+                            :show-button="false" />
+                        <n-input-number v-model:value="item.memberPrice" clearable placeholder="会员价"
+                            :show-button="false" />
+                        <n-button style="margin-left: 12px" @click="removeItem(index)">
                             删除
                         </n-button>
                     </n-form-item>
@@ -60,41 +62,11 @@
             </template>
             <template #action>
                 <div>
-                    <n-button @click="addhandleClose">取消</n-button>
-                    <n-button type="primary" @click="addhandleSubmit">提交</n-button>
+                    <n-button @click="publicStore.changeShowModal()">取消</n-button>
+                    <n-button type="primary" @click="handleSubmit()">提交</n-button>
                 </div>
             </template>
-        </AddModal>
-        <EditModal>
-            <template #header>
-                <div>编辑{{ staticServiceName }}信息</div>
-            </template>
-            <template #form-content>
-                <div>
-                    <n-form-item label="服务名称：" path="productName">
-                        <n-input v-model:value="itemInfo.serviceName" placeholder="请输入服务名称" />
-                    </n-form-item>
-                    <n-form-item v-for="(item, index) in pricingItems" :key="`pricing-${index}`"
-                        :label="`价目表${index + 1}`">
-                        <n-input v-model:value="item.pricingName" clearable placeholder="名称：例如小型犬洗澡" />
-                        <n-input v-model:value="item.originalPrice" clearable placeholder="原价" />
-                        <n-input v-model:value="item.memberPrice" clearable placeholder="会员价" />
-                        <n-button style="margin-left: 12px" @click="removePricingItem(index)">
-                            删除
-                        </n-button>
-                    </n-form-item>
-                </div>
-                <n-button attr-type="button" @click="addPricingItem">
-                    增加
-                </n-button>
-            </template>
-            <template #action>
-                <div>
-                    <n-button @click="editHandleClose">取消</n-button>
-                    <n-button type="primary" @click="editHandleSubmit">提交</n-button>
-                </div>
-            </template>
-        </EditModal>
+        </Modal>
     </div>
 </template>
 
@@ -108,18 +80,16 @@ const publicStore = usePublicStore();
 const message = useMessage()
 
 const servicesList = computed(() => servicesStore.servicesList);
+// 价目表项目
 const itemInfo = ref([])
+// 服务菜单
 const servicesTypeList = computed(() =>
     servicesStore.servicesTypeList.map(serviceType => ({
         label: serviceType.serviceTypeName,
         key: serviceType.serviceTypeId,
     }))
 );
-const staticServiceName = ref('')
-const serviceName = ref('')
 const selectedKey = ref();
-const pricingItems = ref(servicesStore.pricingList)
-
 const dynamicForm = reactive({
     name: '',
     hobbies: []
@@ -145,89 +115,98 @@ const handleMenuSelect = async (key) => {
     await servicesStore.fetchServicesList(key);
 };
 
-const addremoveItem = (index: number) => {
-    dynamicForm.hobbies.splice(index, 1)
+// 编辑
+const editService = async (row) => {
+    itemInfo.value = await servicesStore.getByIdPricingList(row.serviceId)
+    dynamicForm.hobbies = itemInfo.value.map((item) => ({
+        pricingId: item.pricingId,
+        pricingName: item.pricingName,
+        originalPrice: item.originalPrice,
+        memberPrice: item.memberPrice
+    }))
+    publicStore.openEditModal(row)
 }
-const addItem = () => {
-    dynamicForm.hobbies.push({ name: '', originalPrice: '', memberPrice: '' });
+// 添加
+// const addService = (addItem) => {
+//     publicStore.openAddModal(addItem)
+// }
+
+// 校验现有价目名称是否重复
+function checkExistingDuplicates(newItem, existingItems) {
+    const existingNamesSet = new Set(existingItems.map(item => item.pricingName));
+    return existingNamesSet.has(newItem.pricingName);
+}// 校验新添加的价目名称是否重复
+function checkNewDuplicates(newItems) {
+    const names = newItems.map(item => item.pricingName);
+    const duplicates = names.filter((name, index) => names.indexOf(name) !== index);
+    return duplicates.length > 0 ? duplicates : null;
 }
 
-const addService = () => {
-    publicStore.addShowModal = true
-}
 
-const addhandleClose = () => {
-    publicStore.addShowModal = false;
-}
-
-const addhandleSubmit = async () => {
-    const newService = {
-        serviceName: serviceName.value,
-        serviceTypeId: selectedKey.value,
-    };
-    console.log(newService);
-
+const handleSubmit = async () => {
     try {
-        // 假设有一个 API 调用来保存产品信息
-        await servicesStore.addServices(newService);
+        // 获取新添加的价目项
+        const newPricingItems = dynamicForm.hobbies.filter(item => !item.pricingId);
 
-        // 提示成功消息
-        message.success('产品信息已保存');
+        // 校验现有价目名称重复
+        for (const item of newPricingItems) {
+            if (checkExistingDuplicates(item, itemInfo.value)) {
+                console.error(`新增的价目名称重复: ${item.pricingName}`);
+                // 显示错误消息等
+                return;
+            }
+        }
+
+        // 校验新添加的价目名称重复
+        const newDuplicates = checkNewDuplicates(newPricingItems);
+        if (newDuplicates) {
+            console.error('新增的价目名称重复:', newDuplicates.join(', '));
+            // 显示错误消息等
+            return;
+        }
+
+        // 没有重复名称，准备提交的数据
+        const PricingData = newPricingItems.map(hobby => ({
+            ...hobby,
+            servicesId: publicStore.itemList.serviceId,
+            pricingId: null
+        }));
+
+        if (publicStore.isEditMode) {
+            console.log(PricingData);
+            await servicesStore.addPricingItem(PricingData)
+        } else {
+            console.log(2);
+            console.log('创建新服务:', publicStore.itemList.serviceName);
+            console.log('创建价目表:', dynamicForm.hobbies);
+        }
     } catch (error) {
-        // 提示错误消息
-        message.error('保存产品信息失败');
+        console.error('提交失败:', error);
     }
 };
 
-const deleteService = async (id) => {
-    try {
-        await servicesStore.deleteService(id);
-        // 提示成功消息
-        message.success('删除成功');
-    } catch (error) {
-        message.error('删除失败');
-    }
-}
 onMounted(async () => {
     await loadData();
 });
 
-const editService = async (row) => {
-    publicStore.editShowModal = true
-    staticServiceName.value = row.serviceName;
-    itemInfo.value = row
-    pricingItems.value = await servicesStore.getByIdPricingList(row.serviceId)
+// 价目表开关
+const removeItem = (index: number) => {
+    dynamicForm.hobbies.splice(index, 1)
 }
-const removePricingItem = (index) => {
-    pricingItems.value.splice(index, 1);
+const addItem = () => {
+    dynamicForm.hobbies.push({ pricingName: '', servicesId: publicStore.itemList.serviceId, originalPrice: null, memberPrice: null });
 }
-const addPricingItem = () => {
-    pricingItems.value.push({
-        pricingName: '',
-        originalPrice: null,
-        memberPrice: null,
-        servicesId: itemInfo.value.serviceId
-    });
-}
-const editHandleClose = () => {
-    publicStore.editShowModal = false
-}
-const editHandleSubmit = async () => {
-    const updatedPricing = pricingItems.value.map(item => ({
-        ...item,
-        servicesId: itemInfo.value.serviceId,
-        originalPrice: Number(item.originalPrice), // 转换为数字
-        memberPrice: Number(item.memberPrice) // 转换为数字
-    }));
 
-    const serviceData = {
-        pricing: updatedPricing,
-    };
-
-    console.log(serviceData);
-
-    await servicesStore.addPricingItem(serviceData)
-}
+// 删除
+// const deleteService = async (id) => {
+//     try {
+//         await servicesStore.deleteService(id);
+//         // 提示成功消息
+//         message.success('删除成功');
+//     } catch (error) {
+//         message.error('删除失败');
+//     }
+// }
 </script>
 
 <style scoped>
