@@ -42,16 +42,14 @@ export const useServicesStore = defineStore("services", {
       }
     },
     async addServices(servicesData) {
+      console.log(servicesData);
+
       try {
         const response = await servicesService.addServices(servicesData);
-        if (response.status === 200) {
-          // 如果API调用成功，可以选择将新服务添加到服务列表中
-          this.servicesList.push(response.data);
-          // 或者重新获取服务列表
-          await this.fetchServicesList(this.selectedServiceTypeId);
-        }
+        return response.data.serviceId;
       } catch (error) {
-        console.error(error);
+        // console.error("添加服务时出错:", error);
+        // throw error; // 抛出错误，由调用者处理
       }
     },
     async deleteService(servicesId) {
@@ -77,6 +75,33 @@ export const useServicesStore = defineStore("services", {
     async addPricingItem(serviceData) {
       const request = await servicesService.addPricing(serviceData);
       console.log(request);
-    }
+    },
+    async submitNewServiceAndPricing(serviceData, pricingItems) {
+      try {
+        // 添加服务并获取新服务的 ID
+        const serviceId = await this.addServices(serviceData);
+        if (!serviceId) {
+          throw new Error("服务添加失败，未获得服务 ID。");
+        }
+        // 如果提供了价目表项，添加它们
+        if (pricingItems.length > 0) {
+          const pricingDataWithServiceId = pricingItems.map((item) => ({
+            ...item,
+            servicesId: serviceId,
+          }));
+          await this.addPricingItem(pricingDataWithServiceId);
+        }
+        return serviceId; // 返回新服务的 ID 以便进一步操作
+      } catch (error) {
+        console.error("添加服务或价目表时出错:", error);
+        throw error; // 抛出错误，由调用者处理
+      }
+    },
+    async updatePricingItem(serviceData) {
+      const updatePromises = serviceData.map((item) => {
+        const { pricingId, ...data } = item;
+        servicesService.updatePricing(pricingId, data);
+      });
+    },
   },
 });

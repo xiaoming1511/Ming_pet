@@ -12,7 +12,7 @@
                     <n-input-group>
                         <n-flex justify="space-between" class="w-full h-full items-center p-x5">
                             <div class="header-title">服务内容</div>
-                            <n-button type="primary" @click="addService">添加</n-button>
+                            <n-button type="primary" @click="publicStore.openAddModal(addItem)">添加</n-button>
                         </n-flex>
                     </n-input-group>
 
@@ -46,11 +46,12 @@
                     </n-form-item>
                     <n-form-item v-for="(item, index) in dynamicForm.hobbies" :key="`hobby-${index}`"
                         :label="`价目表${index + 1}`" :path="`hobbies[${index}].hobby`">
-                        <n-input v-model:value="item.pricingName" clearable placeholder="名称：例如小型犬洗澡" />
-                        <n-input-number v-model:value="item.originalPrice" clearable placeholder="原价"
-                            :show-button="false" />
-                        <n-input-number v-model:value="item.memberPrice" clearable placeholder="会员价"
-                            :show-button="false" />
+                        <n-input v-model:value="item.pricingName" @blur="triggerChange(index)" clearable
+                            placeholder="名称：例如小型犬洗澡" />
+                        <n-input-number v-model:value="item.originalPrice" @blur="triggerChange(index)" clearable
+                            placeholder="原价" :show-button="false" />
+                        <n-input-number v-model:value="item.memberPrice" @blur="triggerChange(index)" clearable
+                            placeholder="会员价" :show-button="false" />
                         <n-button style="margin-left: 12px" @click="removeItem(index)">
                             删除
                         </n-button>
@@ -73,13 +74,14 @@
 <script setup lang="ts">
 import { useServicesStore } from '@/stores/modules/services';
 import { usePublicStore } from '@/stores/public';
-import { styleType } from 'element-plus/es/components/table-v2/src/common';
+import index from '@/views/home/index.vue';
 
 const servicesStore = useServicesStore();
 const publicStore = usePublicStore();
 const message = useMessage()
 
 const servicesList = computed(() => servicesStore.servicesList);
+const changedItems = ref([]);
 // 价目表项目
 const itemInfo = ref([])
 // 服务菜单
@@ -126,10 +128,6 @@ const editService = async (row) => {
     }))
     publicStore.openEditModal(row)
 }
-// 添加
-// const addService = (addItem) => {
-//     publicStore.openAddModal(addItem)
-// }
 
 // 校验现有价目名称是否重复
 function checkExistingDuplicates(newItem, existingItems) {
@@ -141,30 +139,44 @@ function checkNewDuplicates(newItems) {
     const duplicates = names.filter((name, index) => names.indexOf(name) !== index);
     return duplicates.length > 0 ? duplicates : null;
 }
+// 每当输入框失焦时触发的方法
+function triggerChange(index) {
+    const pricingId = itemInfo.value[index].pricingId;
+    // 在dynamicForm.hobbies中查找与该pricingId匹配的条目
+    const changedItem = dynamicForm.hobbies.find(item => item.pricingId === pricingId);
+
+    // 检查该条目是否已经在changedItems中
+    const existingIndex = changedItems.value.findIndex(item => item.pricingId === pricingId);
+
+    // 如果该条目不存在于changedItems中，则添加它
+    if (existingIndex === -1 && changedItem) {
+        changedItems.value.push(changedItem);
+    } else if (changedItem) {
+        // 如果该条目已存在于changedItems中，更新该条目
+        changedItems.value[existingIndex] = changedItem;
+    }
+}
 
 
 const handleSubmit = async () => {
     try {
         // 获取新添加的价目项
         const newPricingItems = dynamicForm.hobbies.filter(item => !item.pricingId);
-
         // 校验现有价目名称重复
         for (const item of newPricingItems) {
             if (checkExistingDuplicates(item, itemInfo.value)) {
-                console.error(`新增的价目名称重复: ${item.pricingName}`);
+                message.error(`新增的价目名称重复: ${item.pricingName}`);
                 // 显示错误消息等
                 return;
             }
         }
-
         // 校验新添加的价目名称重复
         const newDuplicates = checkNewDuplicates(newPricingItems);
         if (newDuplicates) {
-            console.error('新增的价目名称重复:', newDuplicates.join(', '));
+            message.error('新增的价目名称重复:', newDuplicates.join(', '));
             // 显示错误消息等
             return;
         }
-
         // 没有重复名称，准备提交的数据
         const PricingData = newPricingItems.map(hobby => ({
             ...hobby,
@@ -173,13 +185,25 @@ const handleSubmit = async () => {
         }));
 
         if (publicStore.isEditMode) {
-            console.log(PricingData);
-            await servicesStore.addPricingItem(PricingData)
+            // 检查 dynamicForm.hobbies 是否有新增或改变的项
+            const isNewOrChanged = dynamicForm.hobbies.some(hobby => !hobby.pricingId || hobby.isChanged);
+            if (isNewOrChanged) {
+                // 如果有新的或改变的价目项，调用添加价目的方法
+                await servicesStore.addPricingItem(PricingData);
+            } else {
+                // 如果没有变化，调用更新信息的方法
+                await servicesStore.updatePricingItem(changedItems.value);
+            }
+            message.success('保存成功')
         } else {
-            console.log(2);
-            console.log('创建新服务:', publicStore.itemList.serviceName);
-            console.log('创建价目表:', dynamicForm.hobbies);
+            const ServiceItem = {
+                serviceName: publicStore.itemList.serviceName,
+                serviceTypeId: selectedKey.value
+            };
+            await servicesStore.submitNewServiceAndPricing(ServiceItem, dynamicForm.hobbies)
+            message.success('添加成功')
         }
+        publicStore.changeShowModal()
     } catch (error) {
         console.error('提交失败:', error);
     }
@@ -191,22 +215,23 @@ onMounted(async () => {
 
 // 价目表开关
 const removeItem = (index: number) => {
-    dynamicForm.hobbies.splice(index, 1)
+    // dynamicForm.hobbies.splice(index, 1)
+    console.log(itemInfo.value[index].pricingId);
 }
 const addItem = () => {
     dynamicForm.hobbies.push({ pricingName: '', servicesId: publicStore.itemList.serviceId, originalPrice: null, memberPrice: null });
 }
 
 // 删除
-// const deleteService = async (id) => {
-//     try {
-//         await servicesStore.deleteService(id);
-//         // 提示成功消息
-//         message.success('删除成功');
-//     } catch (error) {
-//         message.error('删除失败');
-//     }
-// }
+const deleteService = async (id) => {
+    try {
+        await servicesStore.deleteService(id);
+        // 提示成功消息
+        message.success('删除成功');
+    } catch (error) {
+        message.error('删除失败');
+    }
+}
 </script>
 
 <style scoped>

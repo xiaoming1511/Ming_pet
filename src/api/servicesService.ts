@@ -19,6 +19,9 @@ class ServicesService {
   addPricing(serviceData) {
     return http.post("pricing/add", serviceData);
   }
+  updatePricing(id, serviceData) {
+    return http.put(`pricing/update/${id}`, serviceData);
+  }
 }
 
 export default new ServicesService();
