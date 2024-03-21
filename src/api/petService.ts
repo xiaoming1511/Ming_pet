@@ -4,8 +4,8 @@ class petsService {
   getPetsList() {
     return http.get("/pets/list");
   }
-  getpetsServiceList() {
-    return http.get("/petServices");
+  getpetsServiceList(serviceDate) {
+    return http.get("/petServices/byDate", { params: { serviceDate } });
   }
   addPet(petDate) {
     return http.post("pets/add", petDate);

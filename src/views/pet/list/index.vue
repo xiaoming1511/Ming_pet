@@ -17,7 +17,20 @@
                     :options="options" />
             </template>
             <template #search-actions>
-                <n-button round @click="addPet">
+                <n-button class="mr-4" text quaternary :focusable="false" @click="addPet(fromDate)">
+                    <template #icon>
+                        <n-icon>
+                            <IconAdd></IconAdd>
+                        </n-icon>
+                    </template>
+                    <span>添加</span>
+                </n-button>
+                <n-button round color="#fdda11" text-color="#000" :focusable="false">
+                    <template #icon>
+                        <n-icon>
+                            <IconSearch></IconSearch>
+                        </n-icon>
+                    </template>
                     搜索
                 </n-button>
             </template>
@@ -33,8 +46,7 @@
                         <n-input v-model:value="publicStore.itemList.petName" placeholder="请输入宠物名称" />
                     </n-form-item>
                     <n-form-item label="种类：" path="breed">
-                        <n-select v-model:value="publicStore.itemList.breed" :options="breed"
-                            placeholder="请选择状态" />
+                        <n-select v-model:value="publicStore.itemList.breed" :options="breed" placeholder="请选择状态" />
                     </n-form-item>
                     <n-form-item label="性别：" path="gender">
                         <n-radio-group v-model:value="publicStore.itemList.gender" name="radiobuttongroup1">
@@ -51,6 +63,10 @@
                     </n-form-item>
                     <n-form-item label="体重：" path="weight">
                         <n-input v-model:value="publicStore.itemList.weight" placeholder="请输入体重" />
+                    </n-form-item>
+                    <n-form-item label="主人：" path="ownerId">
+                        <n-select v-model:value="publicStore.itemList.ownerId" :options="OwnerList"
+                            placeholder="请选择主人" />
                     </n-form-item>
                     <n-form-item label="状态：" path="weight">
                         <n-select v-model:value="publicStore.itemList.saleStatus" :options="saleStatus"
@@ -79,9 +95,11 @@
 import { usePetsStore } from '@/stores/modules/pets';
 import { NButton, useModal } from 'naive-ui';
 import { usePublicStore } from '@/stores/public';
+import { usecustomersStore } from '@/stores/modules/customers';
 
 const publicStore = usePublicStore();
 const PetsStore = usePetsStore();
+const customersStore = usecustomersStore();
 const PetsList = ref([])
 const itemList = ref([])
 const rowKeyProp = 'id'
@@ -135,15 +153,16 @@ const modal = useModal();
 const fromDate = ref({
     age: null,
     birthday: '',
-    breed: '',
+    breed: null,
     gender: '',
-    healthStatus: "",
-    name: '',
+    healthStatus: null,
+    petName: '',
     ownerId: null,
     price: null,
-    saleStatus: '',
+    saleStatus: null,
     weight: null
 })
+const OwnerList = ref([])
 
 const options = [
     {
@@ -193,10 +212,6 @@ const columns = ref([
         key: 'price'
     },
     {
-        title: '宠物生日',
-        key: 'birthday'
-    },
-    {
         title: '创建时间',
         key: 'createdAt'
     },
@@ -226,9 +241,14 @@ const columns = ref([
     }
 ]);
 
-onMounted(async () => {
+const getAllPets = async () => {
     await PetsStore.fetchPets()
     PetsList.value = PetsStore.pets
+}
+
+onMounted(async () => {
+    getAllPets()
+    getOwnerList()
 })
 
 function showDeleteConfirm(row) {
@@ -256,9 +276,9 @@ function changeStatus(row, newVal) {
 const changeTime = (date) => {
     return Date.parse(date);
 }
-const addPet = () => {
+const addPet = (fromDate) => {
     timestamp.value = null
-    publicStore.openAddModal()
+    publicStore.openAddModal(fromDate)
 }
 const handleSubmit = async () => {
     const { id, createdAt, deleted, isDeleted, updatedAt, ...item } = publicStore.itemList;
@@ -269,10 +289,10 @@ const handleSubmit = async () => {
     } else {
         // console.log(publicStore.itemList);
         fromDate.value.birthday = changeDate(timestamp.value)
-        fromDate.value.ownerId = 1
-        console.log(fromDate.value);
         await PetsStore.addPet(fromDate.value)
     }
+    getAllPets()
+    publicStore.changeShowModal()
 }
 const changeDate = (nowDate) => {
     const date: Date = new Date(nowDate);
@@ -283,6 +303,14 @@ const changeDate = (nowDate) => {
     const formattedDate: string = `${year}-${month}-${day}`;
 
     return formattedDate
+}
+
+const getOwnerList = async () => {
+    await customersStore.fetchcustomers()
+    OwnerList.value = customersStore.customers.map(item => ({
+        label: item.customerName,
+        value: item.customerId
+    }))
 }
 </script>
 

@@ -11,7 +11,8 @@
                 </n-input>
             </template>
             <template #search-actions>
-                <n-button class="mr-4" text quaternary :focusable="false" @click="addEmployee">
+                <n-button class="mr-4" text quaternary :focusable="false"
+                    @click="publicStore.openAddModal(addItemList)">
                     <template #icon>
                         <n-icon>
                             <IconAdd></IconAdd>
@@ -29,61 +30,34 @@
                 </n-button>
             </template>
         </SearchBar>
-        <Table :columns="columns" :data="employeeList"></Table>
-        <AddModal>
+        <Table :columns="columns" :data="employeeList" :row-key="rowKeyProp"></Table>
+        <Modal>
             <template #header>
-                <div>编辑信息</div>
-            </template>
-            <template #form-content>
-                <div>
-                    <n-form-item label="姓名：" path="employeeName">
-                        <n-input v-model:value="addItemList.employeeName" placeholder="请输入姓名" />
-                    </n-form-item>
-                    <n-form-item label="电话：" path="employeePhone">
-                        <n-input v-model:value="addItemList.employeePhone" placeholder="请输入电话号码" />
-                    </n-form-item>
-                    <n-form-item label="邮箱：" path="employeeEmail">
-                        <n-input v-model:value="addItemList.employeeEmail" placeholder="请输入邮箱" />
-                    </n-form-item>
-                    <n-form-item label="地址：" path="employeePosition">
-                        <n-input v-model:value="addItemList.employeePosition" placeholder="请输入地址" />
-                    </n-form-item>
-                </div>
-            </template>
-            <template #action>
-                <div>
-                    <n-button @click="publicStore.changeAddShowModal()">取消</n-button>
-                    <n-button type="primary" @click="addHandleSubmit">提交</n-button>
-                </div>
-            </template>
-        </AddModal>
-        <EditModal>
-            <template #header>
-                <div>编辑信息</div>
+                <div>{{ publicStore.modalTitle }}</div>
             </template>
             <template #form-content>
                 <div>
                     <n-form-item label="姓名：" path="productName">
-                        <n-input v-model:value="itemList.employeeName" placeholder="请输入姓名" />
+                        <n-input v-model:value="publicStore.itemList.employeeName" placeholder="请输入姓名" />
                     </n-form-item>
                     <n-form-item label="电话：" path="category">
-                        <n-input v-model:value="itemList.employeePhone" placeholder="请输入电话号码" />
+                        <n-input v-model:value="publicStore.itemList.employeePhone" placeholder="请输入电话号码" />
                     </n-form-item>
                     <n-form-item label="邮箱：" path="productDescription">
-                        <n-input v-model:value="itemList.employeeEmail" placeholder="请输入地址" />
+                        <n-input v-model:value="publicStore.itemList.employeeEmail" placeholder="请输入地址" />
                     </n-form-item>
                     <n-form-item label="地址：" path="productDescription">
-                        <n-input v-model:value="itemList.employeePosition" placeholder="请输入地址" />
+                        <n-input v-model:value="publicStore.itemList.employeePosition" placeholder="请输入地址" />
                     </n-form-item>
                 </div>
             </template>
             <template #action>
                 <div>
-                    <n-button @click="publicStore.changeEditShowModal()">取消</n-button>
-                    <n-button type="primary" @click="edithandleSubmit(itemList)">提交</n-button>
+                    <n-button @click="publicStore.changeShowModal()">取消</n-button>
+                    <n-button type="primary" @click="handleSubmit(publicStore.itemList)">提交</n-button>
                 </div>
             </template>
-        </EditModal>
+        </Modal>
     </div>
 </template>
 
@@ -95,6 +69,9 @@ import { NButton, useDialog } from "naive-ui"
 const publicStore = usePublicStore()
 const employeeStore = useemployeeStore();
 const showDialog = useDialog();
+const message = useMessage();
+
+const rowKeyProp = 'employeeId'
 const employeeList = ref([]);
 const itemList = ref()
 const addItemList = ref(
@@ -166,30 +143,29 @@ const columns = ref([
     }
 ]);
 
-onMounted(async () => {
+const getAllEmployeeList = async () => {
     await employeeStore.fetchemployee();
     employeeList.value = employeeStore.employee
-})
-const addEmployee = () => {
-    publicStore.changeAddShowModal()
-}
-const addHandleSubmit = () => {
-    employeeStore.addEmployee(addItemList.value)
 }
 
+onMounted(async () => {
+    getAllEmployeeList()
+})
+
 const handleEdit = (row) => {
-    publicStore.changeEditShowModal()
-    itemList.value = row
+    publicStore.openEditModal(row)
+    console.log(publicStore.itemList);
 }
-const edithandleSubmit = async (EmployeeDate) => {
-    const { employeeEmail, employeeName, employeePhone, employeePosition, employeeId } = EmployeeDate
-    const formattedData = {
-        employeeEmail,
-        employeeName,
-        employeePhone,
-        employeePosition
-    };
-    await employeeStore.updateEmployeeInfo(employeeId, formattedData)
+const handleSubmit = async (EmployeeDate) => {
+    if (publicStore.isEditMode) {
+        await employeeStore.updateEmployeeInfo(EmployeeDate.employeeId, EmployeeDate)
+        message.success("保存成功")
+    } else {
+        await employeeStore.addEmployee(EmployeeDate)
+        message.success("添加成功")
+    }
+    getAllEmployeeList()
+    publicStore.changeShowModal()
 }
 const showDeleteConfirm = async (row) => {
     showDialog.warning({

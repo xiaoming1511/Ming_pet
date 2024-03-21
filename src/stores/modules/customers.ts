@@ -28,7 +28,6 @@ export const usecustomersStore = defineStore("customers", {
         customersId,
         CustomersDate
       );
-      console.log(request);
     },
     async deleteCustomersItem(customersId) {
       const request = await customersService.deleteCustomersItem(customersId);

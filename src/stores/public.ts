@@ -3,8 +3,8 @@ import { defineStore } from "pinia";
 export const usePublicStore = defineStore("public", {
   id: "public",
   state: () => ({
-    itemList: ref(),
-    ShowModal: ref(false),
+    itemList: [],
+    ShowModal: false,
     modalTitle: "",
     submitButtonText: "",
     isEditMode: false,

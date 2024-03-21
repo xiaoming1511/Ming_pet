@@ -1,6 +1,7 @@
 <template>
     <div>
-        <n-modal class="min-w-lg" v-model:show="publicStore.ShowModal" preset="dialog" :title="publicStore.modalTitle" :style="bodyStyle">
+        <n-modal class="min-w-lg" v-model:show="publicStore.ShowModal" preset="dialog" :title="publicStore.modalTitle"
+            :style="bodyStyle">
             <template #header>
                 <slot name="header"></slot>
             </template>

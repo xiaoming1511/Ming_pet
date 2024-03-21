@@ -8,11 +8,12 @@
                 </n-gi>
                 <n-gi class="shadow-xl p-3 rounded-2xl">
                     <div class="text-left text-xl font-bold border-b pb-4 mb-3">
-                        <h2>提醒详情（<span>{{ petServiceListLength }}</span>）
+                        <h2>提醒详情（<span>{{ petsServiceListCount }}</span>）
                         </h2>
                     </div>
                     <n-flex class="overflow-hidden overflow-y-auto max-h-md gap">
-                        <n-list hoverable clickable class="border-b w-full rounded-2xl" v-for="item in petServiceList">
+                        <n-list hoverable clickable class="border-b w-full rounded-2xl"
+                            v-for="item in petStore.petsServiceList.value">
                             <n-list-item class="text-left">
                                 <n-thing content-style="margin-top: 0px;display: flex;gap: .5rem;">
                                     <template #description>
@@ -55,6 +56,9 @@
                             </n-list-item>
                         </n-list>
                     </n-flex>
+                    <n-empty v-if="!petsServiceListCount" class="flex h-full items-center justify-center" size="huge"
+                        description="今天没有工作捏">
+                    </n-empty>
                 </n-gi>
             </n-grid>
         </n-flex>
@@ -63,16 +67,19 @@
 
 <script setup lang="ts">
 import { usePetsStore } from '@/stores/modules/pets';
+import { format } from 'date-fns/esm';
 
 const petStore = usePetsStore();
-const petServiceList = ref([])
-const petServiceListLength = ref(0);
-
+const petsServiceListCount = computed(() => {
+    if (petStore.petsServiceList && petStore.petsServiceList.value) {
+        return petStore.petsServiceList.value.length;
+    }
+    return 0;
+});
 
 onMounted(async () => {
-    await petStore.fetchpetsService()
-    petServiceList.value = petStore.petsService
-    petServiceListLength.value = petServiceList.value.length
+    const today = format(new Date(), 'yyyy-MM-dd');
+    await petStore.fetchpetsService(today)
 })
 </script>
 

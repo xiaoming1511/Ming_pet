@@ -15,7 +15,8 @@
                     :is-date-disabled="disablePreviousDate" />
             </template>
             <template #search-actions>
-                <n-button class="mr-4" text quaternary :focusable="false" @click="addcustomers">
+                <n-button class="mr-4" text quaternary :focusable="false"
+                    @click="publicStore.openAddModal(addItemList)">
                     <template #icon>
                         <n-icon>
                             <IconAdd></IconAdd>
@@ -33,61 +34,34 @@
                 </n-button>
             </template>
         </SearchBar>
-        <Table :columns="columns" :data="customersList"></Table>
-        <AddModal>
+        <Table :columns="columns" :data="customersList" :row-key="rowKeyProp"></Table>
+        <Modal>
             <template #header>
-                <div>添加信息</div>
+                <div>{{ publicStore.modalTitle }}</div>
             </template>
             <template #form-content>
                 <div>
                     <n-form-item label="姓名：" path="customerName">
-                        <n-input v-model:value="addItemList.customerName" placeholder="请输入姓名" />
+                        <n-input v-model:value="publicStore.itemList.customerName" placeholder="请输入姓名" />
                     </n-form-item>
                     <n-form-item label="电话：" path="customerNumber">
-                        <n-input v-model:value="addItemList.customerNumber" placeholder="请输入电话号码" />
+                        <n-input v-model:value="publicStore.itemList.customerNumber" placeholder="请输入电话号码" />
                     </n-form-item>
                     <n-form-item label="邮箱：" path="customerEmail">
-                        <n-input v-model:value="addItemList.customerEmail" placeholder="请输入邮箱" />
+                        <n-input v-model:value="publicStore.itemList.customerEmail" placeholder="请输入邮箱" />
                     </n-form-item>
                     <n-form-item label="地址：" path="customerAddress">
-                        <n-input v-model:value="addItemList.customerAddress" placeholder="请输入地址" />
+                        <n-input v-model:value="publicStore.itemList.customerAddress" placeholder="请输入地址" />
                     </n-form-item>
                 </div>
             </template>
             <template #action>
                 <div>
-                    <n-button @click="publicStore.changeAddShowModal()">取消</n-button>
-                    <n-button type="primary" @click="addHandleSubmit">提交</n-button>
+                    <n-button @click="publicStore.changeShowModal()">取消</n-button>
+                    <n-button type="primary" @click="handleSubmit(publicStore.itemList)">提交</n-button>
                 </div>
             </template>
-        </AddModal>
-        <EditModal>
-            <template #header>
-                <div>编辑信息</div>
-            </template>
-            <template #form-content>
-                <div>
-                    <n-form-item label="姓名：" path="customerName">
-                        <n-input v-model:value="itemList.customerName" placeholder="请输入姓名" />
-                    </n-form-item>
-                    <n-form-item label="电话：" path="customerNumber">
-                        <n-input v-model:value="itemList.customerNumber" placeholder="请输入电话号码" />
-                    </n-form-item>
-                    <n-form-item label="邮箱：" path="customerEmail">
-                        <n-input v-model:value="itemList.customerEmail" placeholder="请输入邮箱" />
-                    </n-form-item>
-                    <n-form-item label="地址：" path="customerAddress">
-                        <n-input v-model:value="itemList.customerAddress" placeholder="请输入地址" />
-                    </n-form-item>
-                </div>
-            </template>
-            <template #action>
-                <div>
-                    <n-button @click="publicStore.changeEditShowModal()">取消</n-button>
-                    <n-button type="primary" @click="editHandleSubmit(itemList)">提交</n-button>
-                </div>
-            </template>
-        </EditModal>
+        </Modal>
     </div>
 </template>
 
@@ -100,6 +74,7 @@ const publicStore = usePublicStore()
 const customersStore = usecustomersStore();
 const showDialog = useDialog();
 
+const rowKeyProp = 'customerId'
 const customersList = ref();
 const itemList = ref()
 const addItemList = ref(
@@ -165,31 +140,27 @@ const columns = ref([
 const disablePreviousDate = (ts: number) => {
     return ts > Date.now()
 }
-onMounted(async () => {
+
+const getAllCustomersList = async () => {
     await customersStore.fetchcustomers();
     customersList.value = customersStore.customers
+}
+onMounted(async () => {
+    getAllCustomersList()
 })
 
 const handleClose = (row) => {
-    publicStore.changeEditShowModal()
-    itemList.value = row
+    publicStore.openEditModal(row)
 }
 
-const addcustomers = async () => {
-    publicStore.changeAddShowModal()
-}
-const addHandleSubmit = async () => {
-    await customersStore.addCustomersItem(addItemList.value)
-}
-const editHandleSubmit = async (customersDate) => {
-    const { customerAddress, customerEmail, customerName, customerNumber, customerId } = customersDate;
-    const formattedData = {
-        customerAddress,
-        customerEmail,
-        customerName,
-        customerNumber
-    };
-    await customersStore.upDateCustomersItem(customerId, formattedData)
+const handleSubmit = async (customersDate) => {
+    if (publicStore.isEditMode) {
+        await customersStore.upDateCustomersItem(customersDate.customerId, customersDate);
+    } else {
+        await customersStore.addCustomersItem(customersDate);
+    }
+    getAllCustomersList()
+    publicStore.changeShowModal()
 }
 
 function showDeleteConfirm(row) {

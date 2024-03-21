@@ -5,7 +5,7 @@ export const usePetsStore = defineStore("pets", {
   id: "pets",
   state: () => ({
     pets: [],
-    petsService: [],
+    petsServiceList: ref([]),
   }),
 
   getters: {
@@ -22,10 +22,10 @@ export const usePetsStore = defineStore("pets", {
         console.error("Failed to fetch pets:", error);
       }
     },
-    async fetchpetsService() {
+    async fetchpetsService(serviceDate) {
       try {
-        const response = await petService.getpetsServiceList();
-        this.petsService = response.data;
+        const response = await petService.getpetsServiceList(serviceDate);
+        this.petsServiceList.value = response.data;
       } catch (error) {
         console.error("Failed to fetch petsService:", error);
       }
