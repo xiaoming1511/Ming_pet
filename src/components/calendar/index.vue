@@ -1,6 +1,6 @@
 <template>
     <div>
-        <n-calendar v-model:value="value" #="{ year, month, date }" @update:value="handleUpdateValue">
+        <n-calendar v-model:value.sync="value" #="{ year, month, date }" @update:value="handleUpdateValue">
             <div class="badge">
                 <n-badge v-if="findBadgeByDate(year, month, date)" :value="findBadgeByDate(year, month, date)" :max="9">
                 </n-badge>
@@ -17,7 +17,7 @@ const petStore = usePetsStore();
 const message = useMessage();
 
 
-const badge = ref(2);
+const badge = ref(0);
 const value = ref(Date.now());
 const currentMonth = new Date();
 const daysInMonth = getDaysInMonth(currentMonth);
@@ -49,10 +49,23 @@ const fillCalendarItems = async () => {
     // 获得当前月份最后一天所在周的周日
     const viewEnd = endOfWeek(end, { weekStartsOn: 0 });
 
-    const calendarViewRange = {
-        viewStart: format(viewStart, 'yyyy-MM-dd'),
-        viewEnd: format(viewEnd, 'yyyy-MM-dd'),
-    };
+    const startDate = format(viewStart, 'yyyy-MM-dd');
+    const endDate = format(viewEnd, 'yyyy-MM-dd');
+
+    const serviceList = await petStore.fetchpetsbyDateRangeServiceList(startDate, endDate)
+
+    const badgeCounts = serviceList.reduce((acc, item) => {
+        acc[item.serviceDate] = (acc[item.serviceDate] || 0) + 1;
+        return acc;
+    }, {});
+
+    calendarItems.value = eachDayOfInterval({ start: viewStart, end: viewEnd }).map(date => {
+        const formattedDate = format(date, 'yyyy-MM-dd');
+        return {
+            date: formattedDate,
+            badge: badgeCounts[formattedDate] || 0
+        };
+    });
 };
 
 const findBadgeByDate = (year, month, date) => {
@@ -62,7 +75,7 @@ const findBadgeByDate = (year, month, date) => {
     const formattedDate = `${year}-${formattedMonth}-${formattedDay}`;
 
     const item = calendarItems.value.find(item => item.date === formattedDate);
-    
+
     return item ? item.badge : null; // 返回具体的badge值
 };
 

@@ -36,5 +36,12 @@ export const usePetsStore = defineStore("pets", {
     async updatePet(petId, petDate) {
       const request = await petService.updatePetsInfo(petId, petDate);
     },
+    async fetchpetsbyDateRangeServiceList(startDate, endDate) {
+      const request = await petService.getpetsbyDateRangeServiceList(
+        startDate,
+        endDate
+      );
+      return request.data
+    },
   },
 });

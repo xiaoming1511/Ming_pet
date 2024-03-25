@@ -1,7 +1,6 @@
 <template>
     <div>
         <n-data-table :columns="columns" :data="data" />
-        <editModal></editModal>
     </div>
 </template>
 

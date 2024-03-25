@@ -7,6 +7,11 @@ class petsService {
   getpetsServiceList(serviceDate) {
     return http.get("/petServices/byDate", { params: { serviceDate } });
   }
+  getpetsbyDateRangeServiceList(startDate, endDate) {
+    return http.get("/petServices/byDateRange", {
+      params: { startDate, endDate },
+    });
+  }
   addPet(petDate) {
     return http.post("pets/add", petDate);
   }

@@ -29,6 +29,8 @@
 <script setup lang="ts">
 import { useOrdersStore } from '@/stores/modules/orders';
 import { NAvatarGroup, NAvatar, NButton } from "naive-ui"
+import AvatarGroup from '@/components/AvatarGroup/index.vue'
+
 const ordersStore = useOrdersStore()
 const ordersList = ref([])
 
@@ -45,18 +47,17 @@ const columns = ref([
         title: '商品',
         key: 'orderItems',
         render(row) {
-            return h(
-                'div',
-                {},
-                row.orderItems.map((item) =>
-                    h(NAvatar, {
-                        src: item.imageUrl,
-                        size: 'medium',
-                        style: 'margin-right: 10px;',
-                    })
-                )
-            );
-        },
+            if (Array.isArray(row.orderItems) && row.orderItems.length > 0) {
+                const imageUrls = row.orderItems.map(item => item.imageUrl);
+                const orderIds = row.orderItems.map(item => item.itemId);
+                // 同时将imageUrls和orderIds作为prop传递给AvatarGroup组件
+                return h(AvatarGroup, {
+                    imageUrls: imageUrls,
+                    orderIds: orderIds
+                });
+            }
+            return null; // 如果没有数据，不渲染组件
+        }
     },
     {
         title: '操作人',

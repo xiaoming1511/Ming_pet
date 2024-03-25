@@ -8,6 +8,8 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AddModal: typeof import('./../components/addModal/index.vue')['default']
+    AvatarGrou: typeof import('./../components/AvatarGrou/index.vue')['default']
+    AvatarGroup: typeof import('./../components/AvatarGroup/index.vue')['default']
     Calendar: typeof import('./../components/calendar/index.vue')['default']
     EditModal: typeof import('./../components/editModal/index.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
@@ -44,6 +46,7 @@ declare module 'vue' {
     NAnchor: typeof import('naive-ui')['NAnchor']
     NAnchorLink: typeof import('naive-ui')['NAnchorLink']
     NAvatar: typeof import('naive-ui')['NAvatar']
+    NAvatarGroup: typeof import('naive-ui')['NAvatarGroup']
     Navigator: typeof import('./../components/navigator/index.vue')['default']
     NBadge: typeof import('naive-ui')['NBadge']
     NButtom: typeof import('naive-ui')['NButtom']
@@ -96,6 +99,7 @@ declare module 'vue' {
     NTag: typeof import('naive-ui')['NTag']
     NThing: typeof import('naive-ui')['NThing']
     NTimePicker: typeof import('naive-ui')['NTimePicker']
+    NTooltip: typeof import('naive-ui')['NTooltip']
     NTransfer: typeof import('naive-ui')['NTransfer']
     NUpload: typeof import('naive-ui')['NUpload']
     ProductAdd: typeof import('../components/addModal/index.vue')['default']

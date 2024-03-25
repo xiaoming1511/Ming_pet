@@ -5,9 +5,6 @@
 <script setup lang="ts">
 import { Chart } from '@antv/g2';
 
-// 将图标组件注册为局部组件
-
-
 const chartContainer = ref<HTMLElement | null>(null);
 
 onMounted(() => {
