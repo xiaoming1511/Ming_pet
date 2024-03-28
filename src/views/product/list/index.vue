@@ -35,7 +35,7 @@
                 </n-button>
             </template>
         </SearchBar>
-        <Table :columns="columns" :data="productList" :row-key="rowKeyProp"></Table>
+        <Table :columns="columns" :data="productList" :row-key="row => row.productId"></Table>
         <Modal>
             <template #header>
                 <div>{{ publicStore.modalTitle }}</div>
@@ -92,7 +92,6 @@ const message = useMessage();
 
 const productList = ref([])
 const selectedValue = ref(null)
-const rowKeyProp = 'productId'
 const columns = ref([
     {
         title: 'productId',

@@ -30,7 +30,7 @@
                 </n-button>
             </template>
         </SearchBar>
-        <Table :columns="columns" :data="employeeList" :row-key="rowKeyProp"></Table>
+        <Table :columns="columns" :data="employeeList" :row-key="row => row.employeeId"></Table>
         <Modal>
             <template #header>
                 <div>{{ publicStore.modalTitle }}</div>
@@ -71,7 +71,6 @@ const employeeStore = useemployeeStore();
 const showDialog = useDialog();
 const message = useMessage();
 
-const rowKeyProp = 'employeeId'
 const employeeList = ref([]);
 const itemList = ref()
 const addItemList = ref(

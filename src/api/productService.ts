@@ -2,7 +2,17 @@ import http from "@/utils/request"; // 导入您之前定义的axios实例
 
 class productService {
   getProductList() {
-    return http.get("/products");
+    return http.get("/products/list");
+  }
+  getProductsByCategory(category) {
+    return http.get("/products/searchByCategory", {
+      params: { category },
+    });
+  }
+  getProductsByName(productName) {
+    return http.get("/products/searchByName", {
+      params: { name: productName },
+    });
   }
   addProduct(productData) {
     return http.post("/products/add", productData);

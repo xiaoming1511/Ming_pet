@@ -9,6 +9,7 @@ export const usePublicStore = defineStore("public", {
     submitButtonText: "",
     isEditMode: false,
     currentItem: null,
+    selectedRows: [],
   }),
 
   getters: {},
@@ -35,6 +36,9 @@ export const usePublicStore = defineStore("public", {
       Object.keys(this.itemList).forEach((key) => {
         this.itemList[key] = null;
       });
+    },
+    setSelectedRows(keys) {
+      this.selectedRows = keys;
     },
   },
 });

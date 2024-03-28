@@ -5,8 +5,6 @@ export const useProductStore = defineStore("product", {
   id: "product",
   state: () => ({
     products: [],
-    editShowModal: ref(false),
-    editList: [],
   }),
 
   getters: {
@@ -14,10 +12,33 @@ export const useProductStore = defineStore("product", {
   },
 
   actions: {
-    async fetchProductList() {
+    async fetchProductList(category = null) {
+      let responseData = [];
       try {
-        const response = await productService.getProductList();
-        this.products = response.data;
+        if (category) {
+          const request = await productService.getProductsByCategory(category);
+          responseData = request.data
+            .map((product) => ({
+              ...product,
+              category:
+                category === 1
+                  ? "主粮"
+                  : category === 4
+                  ? "零食"
+                  : product.category,
+              quantity: 0,
+            }))
+            .filter((product) => product.status == true);
+          return responseData;
+        } else {
+          // Fetch all products if no category is specified
+          const response = await productService.getProductList();
+          responseData = response.data.map((product) => ({
+            ...product,
+            quantity: 0,
+          }));
+          this.products = responseData;
+        }
       } catch (error) {
         console.error("Failed to fetch products:", error);
       }
@@ -42,7 +63,7 @@ export const useProductStore = defineStore("product", {
         console.error("Delete operation failed:", error);
       }
     },
-    async updateProductItem(productId,productData) {    
+    async updateProductItem(productId, productData) {
       try {
         const response = await productService.upDateProduct(
           productId,
@@ -55,6 +76,9 @@ export const useProductStore = defineStore("product", {
       } catch (error) {
         console.error("Update operation failed:", error);
       }
+    },
+    async getProductsByName(productName) {
+      const request = await productService.getProductsByName(productName);
     },
   },
 });

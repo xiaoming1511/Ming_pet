@@ -31,6 +31,7 @@ import { useOrdersStore } from '@/stores/modules/orders';
 import { NAvatarGroup, NAvatar, NButton } from "naive-ui"
 import AvatarGroup from '@/components/AvatarGroup/index.vue'
 
+const showDialog = useDialog();
 const ordersStore = useOrdersStore()
 const ordersList = ref([])
 
@@ -49,11 +50,12 @@ const columns = ref([
         render(row) {
             if (Array.isArray(row.orderItems) && row.orderItems.length > 0) {
                 const imageUrls = row.orderItems.map(item => item.imageUrl);
-                const orderIds = row.orderItems.map(item => item.itemId);
+                const productNames = row.orderItems.map(item => item.productName);
                 // 同时将imageUrls和orderIds作为prop传递给AvatarGroup组件
                 return h(AvatarGroup, {
                     imageUrls: imageUrls,
-                    orderIds: orderIds
+                    productNames: productNames,
+                    onClick: () => handleItemClick(row)
                 });
             }
             return null; // 如果没有数据，不渲染组件
@@ -80,16 +82,6 @@ const columns = ref([
         key: 'actions',
         render(row) {
             return [
-                h(
-                    NButton,
-                    {
-                        strong: true,
-                        tertiary: true,
-                        size: 'small',
-                        onClick: () => handleEdit(row)
-                    },
-                    { default: () => 'Edit' }
-                ),
                 h(NButton, {
                     strong: true,
                     tertiary: true,
@@ -104,13 +96,37 @@ const columns = ref([
 const disablePreviousDate = (ts: number) => {
     return ts > Date.now()
 }
-function aaa(row) {
-    console.log(row);
+
+const showDeleteConfirm = (row) => {
+    showDialog.warning({
+        title: 'Confirm Delete',
+        content: 'Are you sure you want to delete this product?',
+        positiveText: 'Confirm',
+        negativeText: 'Cancel',
+        onPositiveClick: () => handleDeleteClick(row.orderId)
+    });
+}
+const handleDeleteClick = async (orderId) => {
+    await ordersStore.deleteOrder(orderId)
+    getOrderList()
+}
+
+const handleItemClick = (row) => {
+    // 创建一个包含订单ID和订单项信息的对象
+    const productInfo = {
+        orderId: row.orderId,
+        orderItems: row.orderItems
+    };
+    
+}
+
+const getOrderList = async () => {
+    await ordersStore.fetchOrders()
+    ordersList.value = ordersStore.orders
 }
 
 onMounted(async () => {
-    await ordersStore.fetchOrders()
-    ordersList.value = ordersStore.orders
+    getOrderList()
 })
 </script>
 

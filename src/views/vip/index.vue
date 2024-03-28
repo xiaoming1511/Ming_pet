@@ -10,10 +10,6 @@
                     </template>
                 </n-input>
             </template>
-            <template #search-controls>
-                <n-date-picker class="max-w-xs" placeholder="请选择日期范围" clearable type="daterange"
-                    :is-date-disabled="disablePreviousDate" />
-            </template>
             <template #search-actions>
                 <n-button class="mr-4" text quaternary :focusable="false"
                     @click="publicStore.openAddModal(addItemList)">
@@ -34,7 +30,7 @@
                 </n-button>
             </template>
         </SearchBar>
-        <Table :columns="columns" :data="customersList" :row-key="rowKeyProp"></Table>
+        <Table :columns="columns" :data="customersList" :row-key="row => row.customerId"></Table>
         <Modal>
             <template #header>
                 <div>{{ publicStore.modalTitle }}</div>
@@ -74,7 +70,6 @@ const publicStore = usePublicStore()
 const customersStore = usecustomersStore();
 const showDialog = useDialog();
 
-const rowKeyProp = 'customerId'
 const customersList = ref();
 const itemList = ref()
 const addItemList = ref(

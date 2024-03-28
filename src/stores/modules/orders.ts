@@ -20,5 +20,11 @@ export const useOrdersStore = defineStore("orders", {
         console.error("Failed to fetch orders:", error);
       }
     },
+    async addOrder(orderData) {
+      const request = await ordersService.addOrder(orderData);
+    },
+    async deleteOrder(orderId){
+      const request = await ordersService.deleteOrder(orderId)
+    }
   },
 });

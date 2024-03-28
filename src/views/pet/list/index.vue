@@ -35,7 +35,7 @@
                 </n-button>
             </template>
         </SearchBar>
-        <Table :columns="columns" :data="PetsList" :row-key="rowKeyProp"></Table>
+        <Table :columns="columns" :data="PetsList" :row-key="row => row.id"></Table>
         <Modal>
             <template #header>
                 <div>{{ publicStore.modalTitle }}</div>
@@ -102,7 +102,6 @@ const PetsStore = usePetsStore();
 const customersStore = usecustomersStore();
 const PetsList = ref([])
 const itemList = ref([])
-const rowKeyProp = 'id'
 const timestamp = ref()
 const songs = ref([
     {
