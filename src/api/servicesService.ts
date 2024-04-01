@@ -22,6 +22,9 @@ class ServicesService {
   updatePricing(id, serviceData) {
     return http.put(`pricing/update/${id}`, serviceData);
   }
+  addPetServices(ServicesDate) {
+    return http.post("petServices/add", ServicesDate);
+  }
 }
 
 export default new ServicesService();

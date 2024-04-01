@@ -107,13 +107,17 @@ declare module 'vue' {
     NTimePicker: typeof import('naive-ui')['NTimePicker']
     NTooltip: typeof import('naive-ui')['NTooltip']
     NTransfer: typeof import('naive-ui')['NTransfer']
+    NTreeSelect: typeof import('naive-ui')['NTreeSelect']
     NUpload: typeof import('naive-ui')['NUpload']
     ProductAdd: typeof import('../components/addModal/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SearchBar: typeof import('./../components/searchBar/index.vue')['default']
+    ServiceTab: typeof import('./../components/ServiceTab/index.vue')['default']
+    ServiceTabs: typeof import('./../components/ServiceTabs/index.vue')['default']
     Table: typeof import('./../components/table/index.vue')['default']
     Test: typeof import('./../components/test/index.vue')['default']
     Top: typeof import('./../components/top/index.vue')['default']
+    TreeSelect: typeof import('./../components/TreeSelect/index.vue')['default']
   }
 }

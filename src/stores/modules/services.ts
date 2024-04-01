@@ -7,6 +7,9 @@ export const useServicesStore = defineStore("services", {
     servicesList: [],
     servicesTypeList: [],
     selectedServiceTypeId: null,
+    selectedValue: [],
+    selectedServices: [],
+    petDates: {},
   }),
 
   getters: {
@@ -42,13 +45,11 @@ export const useServicesStore = defineStore("services", {
       }
     },
     async addServices(servicesData) {
-      console.log(servicesData);
-
       try {
         const response = await servicesService.addServices(servicesData);
         return response.data.serviceId;
       } catch (error) {
-        // console.error("添加服务时出错:", error);
+        console.error("添加服务时出错:", error);
         // throw error; // 抛出错误，由调用者处理
       }
     },
@@ -102,6 +103,14 @@ export const useServicesStore = defineStore("services", {
         const { pricingId, ...data } = item;
         servicesService.updatePricing(pricingId, data);
       });
+    },
+    async addPetServices(servicesData) {
+      const request = await servicesService.addPetServices(servicesData);
+      return request;
+    },
+    updatePetDate(petId, date) {
+      // 将日期更新为选定的宠物
+      this.petDates[petId] = date;
     },
   },
 });

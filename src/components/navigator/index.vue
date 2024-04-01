@@ -25,7 +25,7 @@
             z-index="1000">
             <n-drawer-content title="购买商品" closable>
                 <n-card style="margin-bottom: 16px">
-                    <n-tabs type="line" animated>
+                    <n-tabs type="line" animated @update:value="handleUpdateServiceTab">
                         <n-tab-pane name="Optional Products" tab="选购商品">
                             <n-tabs type="line" animated placement="left" @update:value="handleTabShow">
                                 <n-tab-pane :name="item.name" :tab="item.tab" :key="item.value"
@@ -36,12 +36,12 @@
                                 </n-tab-pane>
                             </n-tabs>
                         </n-tab-pane>
-                        <n-tab-pane name="jay chou" tab="预约服务">
-                            七里香
+                        <n-tab-pane name="Appointment Service" tab="预约服务">
+                            <ServiceTabs></ServiceTabs>
                         </n-tab-pane>
                     </n-tabs>
                 </n-card>
-                <n-flex justify="end" class="items-center text-2xl h-12">
+                <n-flex justify="end" class="items-center text-2xl h-12" v-if="ServiceTab">
                     <n-select class="w-64" @update:value="handleUpdateValue" filterable :size="large"
                         :options="selectPeople" :render-label="renderLabel" :render-tag="renderSingleSelectTag"
                         placeholder="请选择顾客" />
@@ -81,6 +81,7 @@ const previousTotal = ref(0);
 const total = ref(0)
 const activeTab = ref('oasis');
 const selectedRowKeys = ref([]);
+const ServiceTab = ref(true)
 const nonZeroQuantityRows = computed(() => {
     return productList.value.filter(product => product.quantity > 0);
 });
@@ -127,6 +128,9 @@ const submitOrder = async () => {
 }
 const handleUpdateValue = (value: string) => {
     orderDate.value.customerId = parseInt(value);
+}
+const handleUpdateServiceTab = (tabName: string) => {
+    ServiceTab.value = !ServiceTab.value
 }
 const category = ref([
     {
@@ -301,7 +305,6 @@ watch(() => publicStore.selectedRows, (newSelectedRows) => {
 
 const handleTabShow = async (name) => {
     activeTab.value = name;
-    console.log(activeTabData);
     if (name == 'oasis') {
         await productStore.fetchProductList();
     } else {
