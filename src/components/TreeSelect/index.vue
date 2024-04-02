@@ -15,6 +15,7 @@
 <script setup lang="ts">
 import { useServicesStore } from '@/stores/modules/services';
 import _ from 'lodash';
+import { DateUtils } from '@/utils/dateUtils';
 
 const props = defineProps({
     petId: Number
@@ -97,7 +98,7 @@ watch(selectedValue, (newSelectedServices) => {
         // 更新全局服务列表中的服务项
         serviceStore.selectedValue[matchingGlobalIndex].services = uniqueServices.map(service => ({
             ...service,
-            serviceDate: selectedDate ? formatDate(selectedDate.value) : null // 若selectedDate存在则格式化并添加日期
+            serviceDate: selectedDate ? DateUtils.formatDate(selectedDate.value) : null // 若selectedDate存在则格式化并添加日期
         }));
     }
 });
@@ -107,17 +108,8 @@ const isDateDisabled = (timestamp) => {
     return timestamp < today.getTime();
 };
 
-const formatDate = (date) => {
-    if (!date) return '';
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = `${d.getMonth() + 1}`.padStart(2, '0');
-    const day = `${d.getDate()}`.padStart(2, '0');
-    return `${year}-${month}-${day}`;
-};
-
 watch(selectedDate, (newValue) => {
-    formattedDate.value = formatDate(newValue);
+    formattedDate.value = DateUtils.formatDate(newValue);
 
     const matchedRecordIndex = serviceStore.selectedValue.findIndex(record => record.petId === props.petId);
 

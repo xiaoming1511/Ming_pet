@@ -18,6 +18,19 @@ class petsService {
   updatePetsInfo(petId, petDate) {
     return http.put(`pets/update/${petId}`, petDate);
   }
+  getPetByDateRange(startDate, endDate) {
+    return http.get("/pets/byDateRange", {
+      params: { startDate, endDate },
+    });
+  }
+  getPetByKeyword(keyWord) {
+    return http.get("/pets/byKeyword", { params: { keyWord } });
+  }
+  getPetByCategory(category) {
+    return http.get("/pets/byCategory", {
+      params: { category },
+    });
+  }
 }
 
 export default new petsService();

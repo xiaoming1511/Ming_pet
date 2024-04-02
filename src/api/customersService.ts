@@ -4,14 +4,17 @@ class customersService {
   getCustomersList() {
     return http.get("/customers");
   }
-  addCustomersItem(CustomersDate) {
-    return http.post("/customers/add", CustomersDate);
+  addCustomersItem(CustomersData) {
+    return http.post("/customers/add", CustomersData);
   }
-  upDateCustomersItem(customersId, CustomersDate) {
-    return http.put(`/customers/update/${customersId}`, CustomersDate);
+  upDateCustomersItem(customersId, CustomersData) {
+    return http.put(`/customers/update/${customersId}`, CustomersData);
   }
   deleteCustomersItem(customersId) {
     return http.delete(`/customers/delete/${customersId}`);
+  }
+  getBySearch(search) {
+    return http.get("/customers/search", { params: { search } });
   }
 }
 

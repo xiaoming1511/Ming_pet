@@ -5,6 +5,7 @@ export const useProductStore = defineStore("product", {
   id: "product",
   state: () => ({
     products: [],
+    categories: [],
   }),
 
   getters: {
@@ -12,36 +13,9 @@ export const useProductStore = defineStore("product", {
   },
 
   actions: {
-    async fetchProductList(category = null) {
-      let responseData = [];
-      try {
-        if (category) {
-          const request = await productService.getProductsByCategory(category);
-          responseData = request.data
-            .map((product) => ({
-              ...product,
-              category:
-                category === 1
-                  ? "主粮"
-                  : category === 4
-                  ? "零食"
-                  : product.category,
-              quantity: 0,
-            }))
-            .filter((product) => product.status == true);
-          return responseData;
-        } else {
-          // Fetch all products if no category is specified
-          const response = await productService.getProductList();
-          responseData = response.data.map((product) => ({
-            ...product,
-            quantity: 0,
-          }));
-          this.products = responseData;
-        }
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      }
+    async fetchProductList() {
+      const request = await productService.getProductList()
+      this.products = request.data
     },
     async addProductItem(productData) {
       try {
@@ -79,6 +53,15 @@ export const useProductStore = defineStore("product", {
     },
     async getProductsByName(productName) {
       const request = await productService.getProductsByName(productName);
+      this.products = request.data
+    },
+    async getProductsByCategory(category){
+      const request = await productService.getProductsByCategory(category)
+      this.products = request.data
+    },
+    async getCategory() {
+      const request = await productService.getCategory();
+      this.categories = request.data;
     },
   },
 });

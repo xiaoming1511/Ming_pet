@@ -41,7 +41,19 @@ export const usePetsStore = defineStore("pets", {
         startDate,
         endDate
       );
-      return request.data
+      return request.data;
+    },
+    async getPetByDateRange(startDate, endDate) {
+      const request = await petService.getPetByDateRange(startDate, endDate);
+      this.pets = request.data;
+    },
+    async getPetByKeyword(keyWord) {
+      const request = await petService.getPetByKeyword(keyWord);
+      this.pets = request.data;
+    },
+    async getPetByCategory(category) {
+      const request = await petService.getPetByCategory(category);
+      this.pets = request.data;
     },
   },
 });

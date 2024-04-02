@@ -2,12 +2,12 @@
     <div class="p-5">
         <SearchBar>
             <template #search-input>
-                <n-date-picker class="max-w-xs" placeholder="请选择日期范围" clearable type="daterange"
-                    :is-date-disabled="disablePreviousDate" />
+                <n-date-picker class="max-w-xs" v-model="selectedRange" placeholder="请选择日期范围" clearable type="daterange"
+                    :is-date-disabled="disablePreviousDate" @update:value="handleSelectRange" />
             </template>
 
             <template #search-controls>
-                <n-input placeholder="搜索" class="max-w-48">
+                <n-input placeholder="搜索" v-model:value="searchKeyword" class="max-w-48">
                     <template #suffix>
                         <n-icon>
                             <IconSearch></IconSearch>
@@ -17,7 +17,12 @@
             </template>
 
             <template #search-actions>
-                <n-button round>
+                <n-button round color="#fdda11" text-color="#000" :focusable="false" @click="handleSearch">
+                    <template #icon>
+                        <n-icon>
+                            <IconSearch></IconSearch>
+                        </n-icon>
+                    </template>
                     搜索
                 </n-button>
             </template>
@@ -30,10 +35,13 @@
 import { useOrdersStore } from '@/stores/modules/orders';
 import { NAvatarGroup, NAvatar, NButton } from "naive-ui"
 import AvatarGroup from '@/components/AvatarGroup/index.vue'
+import { DateUtils } from '@/utils/dateUtils';
 
 const showDialog = useDialog();
 const ordersStore = useOrdersStore()
 const ordersList = ref([])
+const selectedRange = ref(null)
+const searchKeyword = ref('')
 
 const columns = ref([
     {
@@ -44,23 +52,23 @@ const columns = ref([
         title: '顾客',
         key: 'customerName'
     },
-    {
-        title: '商品',
-        key: 'orderItems',
-        render(row) {
-            if (Array.isArray(row.orderItems) && row.orderItems.length > 0) {
-                const imageUrls = row.orderItems.map(item => item.imageUrl);
-                const productNames = row.orderItems.map(item => item.productName);
-                // 同时将imageUrls和orderIds作为prop传递给AvatarGroup组件
-                return h(AvatarGroup, {
-                    imageUrls: imageUrls,
-                    productNames: productNames,
-                    onClick: () => handleItemClick(row)
-                });
-            }
-            return null; // 如果没有数据，不渲染组件
-        }
-    },
+    // {
+    //     title: '商品',
+    //     key: 'orderItems',
+    //     render(row) {
+    //         if (Array.isArray(row.orderItems) && row.orderItems.length > 0) {
+    //             const imageUrls = row.orderItems.map(item => item.imageUrl);
+    //             const productNames = row.orderItems.map(item => item.productName);
+    //             // 同时将imageUrls和orderIds作为prop传递给AvatarGroup组件
+    //             return h(AvatarGroup, {
+    //                 imageUrls: imageUrls,
+    //                 productNames: productNames,
+    //                 onClick: () => handleItemClick(row)
+    //             });
+    //         }
+    //         return null; // 如果没有数据，不渲染组件
+    //     }
+    // },
     {
         title: '操作人',
         key: 'employeeName'
@@ -117,7 +125,7 @@ const handleItemClick = (row) => {
         orderId: row.orderId,
         orderItems: row.orderItems
     };
-    
+
 }
 
 const getOrderList = async () => {
@@ -125,6 +133,28 @@ const getOrderList = async () => {
     ordersList.value = ordersStore.orders
 }
 
+const handleSelectRange = (v) => {
+    if (v && Array.isArray(v) && v.length === 2) {
+        selectedRange.value = DateUtils.formatDateRange(v);
+    } else {
+        // 清空已选择的日期范围或者设置默认值，取决于你的业务需求
+        selectedRange.value = [];
+    }
+}
+const handleSearch = async () => {
+    if (selectedRange.value && selectedRange.value.length === 2) {
+        const startDate = selectedRange.value[0];
+        const endDate = selectedRange.value[1];
+        await ordersStore.searchByDate(startDate, endDate);
+    } else if (searchKeyword.value.trim()) {
+        await ordersStore.searchByKey(searchKeyword.value.trim());
+    } else {
+        // 当两者都为空时，刷新整个列表
+        await ordersStore.fetchOrders();
+    }
+    // 当搜索完成时，确保从 store 获取最新数据
+    ordersList.value = ordersStore.orders;
+}
 onMounted(async () => {
     getOrderList()
 })

@@ -2,7 +2,7 @@
     <div class="p-5">
         <SearchBar>
             <template #search-input>
-                <n-input placeholder="搜索" class="max-w-48">
+                <n-input placeholder="搜索" v-model:value="searchKeyword" class="max-w-48">
                     <template #suffix>
                         <n-icon>
                             <IconSearch></IconSearch>
@@ -11,10 +11,10 @@
                 </n-input>
             </template>
             <template #search-controls>
-                <n-date-picker class="max-w-xs" placeholder="请选择日期范围" clearable type="daterange"
-                    :is-date-disabled="disablePreviousDate" />
+                <n-date-picker class="max-w-xs" v-model="selectedRange" placeholder="请选择日期范围" clearable type="daterange"
+                    :is-date-disabled="disablePreviousDate" @update:value="handleSelectRange" />
                 <n-select class="max-w-48" v-model:value="selectedValue" filterable clearable placeholder="选择分类"
-                    :options="options" />
+                    :options="breed" />
             </template>
             <template #search-actions>
                 <n-button class="mr-4" text quaternary :focusable="false" @click="addPet(fromDate)">
@@ -25,7 +25,7 @@
                     </template>
                     <span>添加</span>
                 </n-button>
-                <n-button round color="#fdda11" text-color="#000" :focusable="false">
+                <n-button round color="#fdda11" text-color="#000" :focusable="false" @click="handleSearch">
                     <template #icon>
                         <n-icon>
                             <IconSearch></IconSearch>
@@ -93,13 +93,18 @@
 
 <script setup lang="ts">
 import { usePetsStore } from '@/stores/modules/pets';
-import { NButton, useModal } from 'naive-ui';
+import { NButton } from 'naive-ui';
 import { usePublicStore } from '@/stores/public';
 import { usecustomersStore } from '@/stores/modules/customers';
+import { DateUtils } from '@/utils/dateUtils';
 
 const publicStore = usePublicStore();
 const PetsStore = usePetsStore();
 const customersStore = usecustomersStore();
+const showDialog = useDialog();
+const selectedRange = ref(null)
+const searchKeyword = ref('')
+const selectedValue = ref(null)
 const PetsList = ref([])
 const itemList = ref([])
 const timestamp = ref()
@@ -146,9 +151,7 @@ const saleStatus = ref([
 const disablePreviousDate = (ts: number) => {
     return ts > Date.now()
 }
-const selectedValue = ref(null)
-const showDialog = useDialog();
-const modal = useModal();
+
 const fromDate = ref({
     age: null,
     birthday: '',
@@ -163,16 +166,6 @@ const fromDate = ref({
 })
 const OwnerList = ref([])
 
-const options = [
-    {
-        label: 'Drive My Car',
-        value: 'jk'
-    },
-    {
-        label: 'Norwegian Wood',
-        value: 'lh'
-    },
-]
 const columns = ref([
     {
         title: 'Id',
@@ -310,6 +303,36 @@ const getOwnerList = async () => {
         label: item.customerName,
         value: item.customerId
     }))
+}
+
+const handleSelectRange = (v) => {
+    if (v && Array.isArray(v) && v.length === 2) {
+        selectedRange.value = DateUtils.formatDateRange(v);
+    } else {
+        // 清空已选择的日期范围或者设置默认值，取决于你的业务需求
+        selectedRange.value = [];
+    }
+}
+const handleSearch = async () => {
+    if (!selectedRange.value && !searchKeyword.value.trim() && !selectedValue.value) {
+        // 用户没有选择任何条件，返回全部宠物
+        await getAllPets();
+        return;
+    }
+
+    if (selectedRange.value && selectedRange.value.length === 2) {
+        // 用户选择了日期范围
+        const startDate = selectedRange.value[0];
+        const endDate = selectedRange.value[1];
+        await PetsStore.getPetByDateRange(startDate, endDate);
+    } else if (searchKeyword.value.trim()) {
+        // 用户提供了关键词
+        await PetsStore.getPetByKeyword(searchKeyword.value.trim());
+    } else if (selectedValue.value) {
+        await PetsStore.getPetByCategory(selectedValue.value);
+    }
+
+    PetsList.value = PetsStore.pets
 }
 </script>
 

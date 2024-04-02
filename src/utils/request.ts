@@ -45,7 +45,6 @@ http.interceptors.response.use(
     if (code == 200) {
       return response.data;
     } else {
-      ElMessage.error(msg || "系统出错");
       return Promise.reject(new Error(msg || "Error"));
     }
   },

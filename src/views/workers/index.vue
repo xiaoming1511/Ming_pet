@@ -2,7 +2,7 @@
     <div class="p-5">
         <SearchBar>
             <template #search-input>
-                <n-input placeholder="请输入店员名称/手机号" clearable>
+                <n-input v-model:value="searchKeyword" placeholder="请输入店员名称/手机号" clearable>
                     <template #prefix>
                         <n-icon>
                             <IconSearch></IconSearch>
@@ -20,7 +20,7 @@
                     </template>
                     <span>添加</span>
                 </n-button>
-                <n-button round color="#fdda11" text-color="#000" :focusable="false">
+                <n-button round color="#fdda11" text-color="#000" :focusable="false" @click="handleSearch">
                     <template #icon>
                         <n-icon>
                             <IconSearch></IconSearch>
@@ -72,6 +72,7 @@ const showDialog = useDialog();
 const message = useMessage();
 
 const employeeList = ref([]);
+const searchKeyword = ref('')
 const itemList = ref()
 const addItemList = ref(
     {
@@ -177,6 +178,10 @@ const showDeleteConfirm = async (row) => {
 }
 const handleDeleteClick = async (id) => {
     await employeeStore.deleteEmployeeInfo(id)
+}
+const handleSearch = async () => {
+    await employeeStore.getBySearch(searchKeyword.value)
+    employeeList.value = employeeStore.employee
 }
 </script>
 

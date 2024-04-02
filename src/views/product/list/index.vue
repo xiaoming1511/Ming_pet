@@ -2,7 +2,7 @@
     <div class="p-5">
         <SearchBar>
             <template #search-input>
-                <n-input placeholder="请输入商品名称" clearable>
+                <n-input v-model:value="searchKeyword" placeholder="请输入商品名称" clearable>
                     <template #prefix>
                         <n-icon>
                             <IconSearch></IconSearch>
@@ -25,7 +25,7 @@
                     </template>
                     <span>添加</span>
                 </n-button>
-                <n-button round color="#fdda11" text-color="#000" :focusable="false">
+                <n-button round color="#fdda11" text-color="#000" :focusable="false" @click="handleSearch">
                     <template #icon>
                         <n-icon>
                             <IconSearch></IconSearch>
@@ -91,6 +91,7 @@ const modal = useModal();
 const message = useMessage();
 
 const productList = ref([])
+const searchKeyword = ref(null)
 const selectedValue = ref(null)
 const columns = ref([
     {
@@ -113,7 +114,7 @@ const columns = ref([
     },
     {
         title: '分类',
-        key: 'category'
+        key: 'categoryName'
     },
     {
         title: '商品描述',
@@ -170,16 +171,7 @@ const columns = ref([
     }
 ]);
 // 分类
-const categoryOptions = ref([
-    {
-        label: '主粮',
-        value: '1'
-    },
-    {
-        label: '零食',
-        value: '4'
-    }
-])
+const categoryOptions = ref([]);
 const formModel = ref({
     productName: '',
     productDescription: '',
@@ -211,7 +203,12 @@ const previewFileList = ref<UploadFileInfo[]>([
 
 onMounted(async () => {
     await productStore.fetchProductList();
+    await productStore.getCategory()
     productList.value = JSON.parse(JSON.stringify(productStore.products));
+    categoryOptions.value = productStore.categories.map(cat => ({
+        label: cat.categoryName,
+        value: cat.categoryId
+    }));
 })
 watch(() => productStore.products, (newProducts) => {
     productList.value = newProducts;
@@ -282,6 +279,41 @@ const handleDeleteClick = async (productId) => {
     } catch (error) {
         console.error('删除失败', error);
     }
+}
+
+const handleSearch = async () => {
+    try {
+        // 如果同时存在搜索关键词和选定的分类
+        if (searchKeyword.value && selectedValue.value) {
+            // 先根据分类筛选
+            await productStore.getProductsByCategory(selectedValue.value);
+            // 再根据搜索关键词进行过滤
+            productList.value = productStore.products.filter(product =>
+                product.productName.includes(searchKeyword.value)
+            ).map(mapProductWithCategory);
+        } else if (searchKeyword.value) {
+            // 仅存在搜索关键词
+            await productStore.getProductsByName(searchKeyword.value);
+            productList.value = productStore.products.map(mapProductWithCategory);
+        } else if (selectedValue.value) {
+            // 仅存在选定的分类
+            await productStore.getProductsByCategory(selectedValue.value);
+            productList.value = productStore.products.map(mapProductWithCategory);
+        } else {
+            // 如果没有任何筛选条件，获取所有产品
+            await productStore.fetchProductList();
+        }
+    } catch (error) {
+        console.error("Failed to fetch and process products:", error);
+    }
+}
+function mapProductWithCategory(product) {
+    const category = categoryOptions.value.find(option => option.value === product.category);
+    return {
+        ...product,
+        status: product.status === '1', // 状态转换
+        categoryName: category ? category.label : product.categoryName, // 分类名称转换
+    };
 }
 </script>
 

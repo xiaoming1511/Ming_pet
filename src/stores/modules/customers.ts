@@ -32,5 +32,9 @@ export const usecustomersStore = defineStore("customers", {
     async deleteCustomersItem(customersId) {
       const request = await customersService.deleteCustomersItem(customersId);
     },
+    async getBySearch(search) {
+      const request = await customersService.getBySearch(search);
+      this.customers = request.data;
+    },
   },
 });

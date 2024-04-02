@@ -2,7 +2,7 @@
     <div class="p-5">
         <SearchBar>
             <template #search-input>
-                <n-input placeholder="搜索" class="max-w-48">
+                <n-input v-model:value="searchKeyword" placeholder="搜索" class="max-w-48">
                     <template #suffix>
                         <n-icon>
                             <IconSearch></IconSearch>
@@ -20,7 +20,7 @@
                     </template>
                     <span>添加</span>
                 </n-button>
-                <n-button round color="#fdda11" text-color="#000" :focusable="false">
+                <n-button round color="#fdda11" text-color="#000" :focusable="false" @click="handleSearch">
                     <template #icon>
                         <n-icon>
                             <IconSearch></IconSearch>
@@ -72,6 +72,7 @@ const showDialog = useDialog();
 
 const customersList = ref();
 const itemList = ref()
+const searchKeyword = ref("")
 const addItemList = ref(
     {
         customerAddress: "",
@@ -169,6 +170,10 @@ function showDeleteConfirm(row) {
 }
 const handleDeleteClick = async (id) => {
     await customersStore.deleteCustomersItem(id)
+}
+const handleSearch = async () => {
+    await customersStore.getBySearch(searchKeyword.value)
+    customersList.value = customersStore.customers
 }
 </script>
 

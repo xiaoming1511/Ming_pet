@@ -14,8 +14,8 @@ export const useOrdersStore = defineStore("orders", {
   actions: {
     async fetchOrders() {
       try {
-        const response = await ordersService.getOrderList();
-        this.orders = response.data;
+        const request = await ordersService.getOrderList();
+        this.orders = request.data;
       } catch (error) {
         console.error("Failed to fetch orders:", error);
       }
@@ -23,8 +23,16 @@ export const useOrdersStore = defineStore("orders", {
     async addOrder(orderData) {
       const request = await ordersService.addOrder(orderData);
     },
-    async deleteOrder(orderId){
-      const request = await ordersService.deleteOrder(orderId)
-    }
+    async deleteOrder(orderId) {
+      const request = await ordersService.deleteOrder(orderId);
+    },
+    async searchByDate(startDate, endDate) {
+      const request = await ordersService.searchByDate(startDate, endDate);
+      this.orders = request.data;
+    },
+    async searchByKey(keyword) {
+      const request = await ordersService.searchByKey(keyword);
+      this.orders = request.data
+    },
   },
 });

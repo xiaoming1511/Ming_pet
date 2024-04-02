@@ -29,5 +29,9 @@ export const useemployeeStore = defineStore("employee", {
     async deleteEmployeeInfo(id) {
       const request = await employeeService.deleteEmployee(id);
     },
+    async getBySearch(search) {
+      const request = await employeeService.getBySearch(search);
+      this.employee = request.data;
+    },
   },
 });

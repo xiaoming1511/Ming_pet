@@ -14,6 +14,9 @@ class productService {
       params: { name: productName },
     });
   }
+  getCategory(){
+    return http.get("/products/categories");
+  }
   addProduct(productData) {
     return http.post("/products/add", productData);
   }

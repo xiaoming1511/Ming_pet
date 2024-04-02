@@ -4,6 +4,14 @@ class orderService {
   getOrderList() {
     return http.get("/orders");
   }
+  searchByDate(startDate, endDate) {
+    return http.get("/orders/searchByDate", {
+      params: { startDate, endDate },
+    });
+  }
+  searchByKey(keyword) {
+    return http.get("/orders/searchByKey", { params: { keyword } });
+  }
   addOrder(orderData) {
     return http.post("/orders/create", orderData);
   }

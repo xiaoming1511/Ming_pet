@@ -4,14 +4,17 @@ class employeeService {
   getemployeeList() {
     return http.get("/employee");
   }
-  addEmployee(EmployeeDate) {
-    return http.post("employee/add", EmployeeDate);
+  addEmployee(EmployeeData) {
+    return http.post("employee/add", EmployeeData);
   }
-  updateEmployee(id, EmployeeDate) {
-    return http.put(`employee/update/${id}`, EmployeeDate);
+  updateEmployee(id, EmployeeData) {
+    return http.put(`employee/update/${id}`, EmployeeData);
   }
   deleteEmployee(id) {
     return http.delete(`employee/delete/${id}`);
+  }
+  getBySearch(search) {
+    return http.get("/employee/search", { params: { search } });
   }
 }
 
