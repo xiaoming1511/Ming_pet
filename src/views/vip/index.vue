@@ -170,6 +170,7 @@ function showDeleteConfirm(row) {
 }
 const handleDeleteClick = async (id) => {
     await customersStore.deleteCustomersItem(id)
+    getAllCustomersList()
 }
 const handleSearch = async () => {
     await customersStore.getBySearch(searchKeyword.value)

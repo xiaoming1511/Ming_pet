@@ -52,23 +52,23 @@ const columns = ref([
         title: '顾客',
         key: 'customerName'
     },
-    // {
-    //     title: '商品',
-    //     key: 'orderItems',
-    //     render(row) {
-    //         if (Array.isArray(row.orderItems) && row.orderItems.length > 0) {
-    //             const imageUrls = row.orderItems.map(item => item.imageUrl);
-    //             const productNames = row.orderItems.map(item => item.productName);
-    //             // 同时将imageUrls和orderIds作为prop传递给AvatarGroup组件
-    //             return h(AvatarGroup, {
-    //                 imageUrls: imageUrls,
-    //                 productNames: productNames,
-    //                 onClick: () => handleItemClick(row)
-    //             });
-    //         }
-    //         return null; // 如果没有数据，不渲染组件
-    //     }
-    // },
+    {
+        title: '商品',
+        key: 'orderItems',
+        render(row) {
+            if (Array.isArray(row.orderItems) && row.orderItems.length > 0) {
+                const imageUrls = row.orderItems.map(item => item.imageUrl);
+                const productNames = row.orderItems.map(item => item.productName);
+                // 同时将imageUrls和orderIds作为prop传递给AvatarGroup组件
+                return h(AvatarGroup, {
+                    imageUrls: imageUrls,
+                    productNames: productNames,
+                    // onClick: () => handleItemClick(row)
+                });
+            }
+            return null; 
+        }
+    },
     {
         title: '操作人',
         key: 'employeeName'
@@ -125,7 +125,6 @@ const handleItemClick = (row) => {
         orderId: row.orderId,
         orderItems: row.orderItems
     };
-
 }
 
 const getOrderList = async () => {
