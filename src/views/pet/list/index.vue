@@ -55,9 +55,6 @@
                             </n-radio>
                         </n-radio-group>
                     </n-form-item>
-                    <n-form-item label="年龄：" path="age">
-                        <n-input v-model:value="publicStore.itemList.age" placeholder="请输入年龄" />
-                    </n-form-item>
                     <n-form-item label="生日：" path="timestamp">
                         <n-date-picker v-model:value="timestamp" type="date" />
                     </n-form-item>
@@ -273,29 +270,22 @@ const addPet = (fromDate) => {
     publicStore.openAddModal(fromDate)
 }
 const handleSubmit = async () => {
+
     const { id, createdAt, deleted, isDeleted, updatedAt, ...item } = publicStore.itemList;
     fromDate.value = item
+
     if (publicStore.isEditMode) {
-        // console.log(id, fromDate.value);
         await PetsStore.updatePet(id, fromDate.value)
     } else {
-        // console.log(publicStore.itemList);
-        fromDate.value.birthday = changeDate(timestamp.value)
+        fromDate.value.birthday = DateUtils.formatDate(timestamp.value)
+        fromDate.value.age = DateUtils.calculateAge(fromDate.value.birthday)
+
         await PetsStore.addPet(fromDate.value)
     }
     getAllPets()
     publicStore.changeShowModal()
 }
-const changeDate = (nowDate) => {
-    const date: Date = new Date(nowDate);
 
-    const year: string = date.getUTCFullYear().toString();
-    const month: string = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-    const day: string = (date.getUTCDate() + 1).toString().padStart(2, '0');
-    const formattedDate: string = `${year}-${month}-${day}`;
-
-    return formattedDate
-}
 
 const getOwnerList = async () => {
     await customersStore.fetchcustomers()
@@ -314,22 +304,17 @@ const handleSelectRange = (v) => {
     }
 }
 const handleSearch = async () => {
-    if (!selectedRange.value && !searchKeyword.value.trim() && !selectedValue.value) {
-        // 用户没有选择任何条件，返回全部宠物
-        await getAllPets();
-        return;
-    }
-
-    if (selectedRange.value && selectedRange.value.length === 2) {
+    if (Array.isArray(selectedRange.value) && selectedRange.value.length === 2) {
         // 用户选择了日期范围
-        const startDate = selectedRange.value[0];
-        const endDate = selectedRange.value[1];
+        const [startDate, endDate] = selectedRange.value;
         await PetsStore.getPetByDateRange(startDate, endDate);
     } else if (searchKeyword.value.trim()) {
         // 用户提供了关键词
         await PetsStore.getPetByKeyword(searchKeyword.value.trim());
     } else if (selectedValue.value) {
         await PetsStore.getPetByCategory(selectedValue.value);
+    } else {
+        await getAllPets()
     }
 
     PetsList.value = PetsStore.pets

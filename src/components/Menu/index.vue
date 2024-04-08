@@ -1,8 +1,8 @@
 <template>
     <n-space vertical size="large" class="h-screen">
         <n-layout has-sider>
-            <n-layout-sider bordered collapse-mode="width" :collapsed="sidebarStore.isSidebarExpanded" :collapsed-width="64"
-                :width="sidebarStore.sidebarWidth">
+            <n-layout-sider bordered collapse-mode="width" :collapsed="sidebarStore.isSidebarExpanded"
+                :collapsed-width="64" :width="sidebarStore.sidebarWidth">
                 <n-menu class="text-left h-screen overflow-y-auto" :collapsed-width="64" :collapsed-icon-size="26"
                     :options="menuOptions" @update:value="handleMenuSelect" />
             </n-layout-sider>
@@ -27,9 +27,8 @@ function handleMenuSelect(key: string) {
     }
 }
 
-function renderIcon(_name: string) {
-    // 仅用于测试，直接返回一个已知的图标组件
-    return () => h(NIcon, null, { default: () => h('IconShouye') });
+function renderIcon(iconName: string) {
+    return () => h(NIcon, null, { default: () => h(iconName) });
 }
 
 const menuOptions = [
@@ -164,6 +163,4 @@ const menuOptions = [
 
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
