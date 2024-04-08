@@ -178,6 +178,7 @@ const showDeleteConfirm = async (row) => {
 }
 const handleDeleteClick = async (id) => {
     await employeeStore.deleteEmployeeInfo(id)
+    getAllEmployeeList()
 }
 const handleSearch = async () => {
     await employeeStore.getBySearch(searchKeyword.value)

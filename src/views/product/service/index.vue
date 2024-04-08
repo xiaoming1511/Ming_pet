@@ -8,7 +8,7 @@
             </div>
 
             <div class="service-r flex-auto bg-white rounded-xl">
-                <n-space vertical align="stretch">
+                <n-space class="h-full" vertical align="stretch">
                     <n-input-group>
                         <n-flex justify="space-between" class="w-full h-full items-center p-x5">
                             <div class="header-title">服务内容</div>
@@ -16,7 +16,7 @@
                         </n-flex>
                     </n-input-group>
 
-                    <n-flex class="card-block ">
+                    <n-flex class="card-block mb-5" v-if="servicesList.length">
                         <div
                             class="flex items-center flex-col bg-gray-100 rounded-2xl p-5 mx-5 min-w-sm max-h-lg overflow-hidden overflow-y-auto">
                             <n-card hoverable class="box-border mb-5 rounded-2xl" v-for="item in servicesList">
@@ -32,6 +32,8 @@
                             </n-card>
                         </div>
                     </n-flex>
+
+                    <n-empty v-else class="p-5 mx-5 bg-gray-100 rounded-xl" description="暂时没有服务列表，请添加"></n-empty>
                 </n-space>
             </div>
         </n-flex>

@@ -4,7 +4,9 @@
 
 <template>
   <n-message-provider>
-    <router-view></router-view>
+    <n-modal-provider>
+      <router-view></router-view>
+    </n-modal-provider>
   </n-message-provider>
 </template>
 

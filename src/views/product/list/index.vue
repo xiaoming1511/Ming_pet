@@ -47,17 +47,17 @@
                             :default-file-list="previewFileList" list-type="image-card" />
                     </n-form-item>
                     <n-form-item label="商品名称：" path="productName">
-                        <n-input v-model:value="publicStore.itemList.productName" placeholder="Input" />
+                        <n-input v-model:value="publicStore.itemList.productName" placeholder="请输入商品名称" />
                     </n-form-item>
                     <n-form-item label="商品分类：" path="category">
                         <n-select v-model:value="publicStore.itemList.category" :options="categoryOptions"
                             placeholder="请选择分类" />
                     </n-form-item>
                     <n-form-item label="商品描述：" path="productDescription">
-                        <n-input v-model:value="publicStore.itemList.productDescription" placeholder="Input" />
+                        <n-input v-model:value="publicStore.itemList.productDescription" placeholder="请输入商品描述" />
                     </n-form-item>
                     <n-form-item label="库存数量：" path="stockQuantity">
-                        <n-input v-model:value="publicStore.itemList.stockQuantity" placeholder="Input" />
+                        <n-input v-model:value="publicStore.itemList.stockQuantity" placeholder="请输入商品数量" />
                     </n-form-item>
                     <n-form-item label="商品价格：" path="price">
                         <n-input-number v-model:value="publicStore.itemList.price" :show-button="false">
@@ -216,12 +216,12 @@ watch(() => productStore.products, (newProducts) => {
 
 // 编辑商品信息
 const handleEdit = (row) => {
-    const { status, category, ...rest } = row;
+    const { status, categoryName, ...rest } = row;
     publicStore.itemList = {
         ...rest,
-        category: getCategoryValue(category)
+        category: getCategoryValue(categoryName)
     };
-
+    
     publicStore.openEditModal(publicStore.itemList)
 }
 // 提交

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <n-data-table :columns="columns" :data="data" :row-key="rowKey"
+        <n-data-table :columns="formattedColumns" :data="data" :row-key="rowKey"
             v-model:checked-row-keys="internalSelectedRowKeys" @update:checked-row-keys="handleCheckedRowKeysChange" />
     </div>
 </template>
@@ -15,6 +15,13 @@ const props = defineProps({
     data: Array,
     rowKey: Function
 });
+const { columns } = toRefs(props);
+
+const formattedColumns = columns.value.map(column => ({
+    ...column,
+    align: 'center',
+}));
+
 
 // 内部状态来同步选中的行键
 const internalSelectedRowKeys = ref([]);
@@ -23,7 +30,7 @@ const internalSelectedRowKeys = ref([]);
 const handleCheckedRowKeysChange = (keys) => {
     internalSelectedRowKeys.value = keys;
     // 更新公共状态存储中的所选行
-    publicStore.setSelectedRows(keys)   
+    publicStore.setSelectedRows(keys)
 };
 
 // 监听来自父组件的 selectedRowKeys 更新
@@ -35,4 +42,11 @@ watch(() => props.selectedRowKeys, (newVal) => {
 
 </script>
 
-<style scoped></style>
+<style scoped>
+:deep(.n-data-table-td--last-col){
+    display: flex;
+    align-items: center;
+    justify-content: center;    
+    gap: 1rem;
+}
+</style>

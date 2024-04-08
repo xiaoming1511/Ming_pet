@@ -109,4 +109,7 @@ onMounted(() => {
     padding: 2px 6px;
     font-size: 0.75rem;
 }
+:deep(.n-calendar-date){
+    gap: .25rem;
+}
 </style>
