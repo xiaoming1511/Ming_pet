@@ -1,6 +1,4 @@
 import axios, { InternalAxiosRequestConfig, AxiosResponse } from "axios";
-import { ElMessage } from "element-plus";
-import { env } from "process";
 
 interface Result {
   code: number;
@@ -19,7 +17,7 @@ enum RequestEnums {
 }
 
 const http = axios.create({
-  baseURL: 'http://localhost:7777',
+  baseURL: "http://localhost:7777",
   timeout: 50000,
   headers: { "Content-Type": "application/json;charset=utf-8" },
 });
@@ -27,30 +25,26 @@ const http = axios.create({
 // 请求拦截器
 http.interceptors.request.use(
   (config) => {
-    // 一般在这个位置判断token是否存在
-    // console.log(config + "token存在");
+    // 使用 console.log 输出请求配置
+    console.log("Request config:", config);
     return config;
   },
-  (error: any) => {
-    // 处理请求错误
+  (error) => {
+    console.error("Request error:", error);
     return Promise.reject(error);
   }
 );
 
 // 响应拦截器
 http.interceptors.response.use(
-  (response: AxiosResponse) => {
-    // 对响应数据做点什么
-    const { code, msg } = response.data;
-    if (code == 200) {
-      return response.data;
-    } else {
-      return Promise.reject(new Error(msg || "Error"));
-    }
+  (response) => {
+    // 使用 console.log 输出响应数据
+    console.log("Response data:", response.data);
+    return response;
   },
-  (error: any) => {
-    // 处理响应错误
-    return Promise.reject(error.message);
+  (error) => {
+    console.error("Response error:", error);
+    return Promise.reject(error);
   }
 );
 

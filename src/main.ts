@@ -8,18 +8,17 @@ import http from "@/utils/request";
 
 import "virtual:svg-icons-register";
 import pinia from "./stores";
-import { setupRouter } from "./router";
+import router from "./router";
 import i18n from "./locales/index";
 
-import { autoImportIcons } from '@/assets/icons';
-
+import { autoImportIcons } from "@/assets/icons";
 
 const app = createApp(App);
 
 autoImportIcons(app);
-
 app.use(i18n);
 app.use(http);
-app.use(setupRouter);
 app.use(pinia);
+app.use(router)
+
 app.mount("#app");

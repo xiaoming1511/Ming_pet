@@ -8,7 +8,7 @@
                     </n-icon>
                 </template>
             </n-switch>
-            <h3 class="text-base">aaa，欢迎使用宠易萌宠物管理系统！</h3>
+            <h3 class="text-base">aaa,欢迎使用宠易萌宠物管理系统！</h3>
         </n-space>
         <n-space class="h-16 items-center justify-end">
             <n-button quaternary circle v-for="(item, index) in Icons" :focusable="false"
@@ -17,8 +17,10 @@
                     <component :is="item" />
                 </template>
             </n-button>
-            <n-dropdown :options="options">
+            <n-dropdown :options="options" @select="handleSelect">
                 <n-avatar round size="large" src="https://s11.ax1x.com/2024/02/05/pFlTtZn.jpg" />
+                <!-- <n-avatar round size="large"
+                    :src="userStore.userInfo.avatar ? userStore.userInfo.avatar : 'https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg'" /> -->
             </n-dropdown>
         </n-space>
         <n-drawer v-model:show="active" :default-width="1100" resizable close-on-esc :max-width="1260" :min-width="800"
@@ -59,10 +61,12 @@ import { usecustomersStore } from '@/stores/modules/customers';
 import { useOrdersStore } from '@/stores/modules/orders';
 import { useProductStore } from '@/stores/modules/product';
 import { useSidebarStore } from '@/stores/modules/sidebar';
+import { useUserStore } from '@/stores/modules/user';
 import { usePublicStore } from '@/stores/public';
 import { NAvatar, NSwitch, NButton, NInputNumber, NText } from 'naive-ui';
 
 const message = useMessage()
+const userStore = useUserStore()
 const OrderStore = useOrdersStore()
 const customerStore = usecustomersStore()
 const publicStore = usePublicStore();
@@ -85,10 +89,7 @@ const ServiceTab = ref(true)
 const nonZeroQuantityRows = computed(() => {
     return productList.value.filter(product => product.quantity > 0);
 });
-const activeTabData = computed(() => {
-    const activeCategory = category.value.find(item => item.name === activeTab.value);
-    return activeCategory && activeCategory.value === 0 ? productList.value : categoryProductList.value;
-});
+const activeTabData = ref([])
 const selectedProducts = computed(() => {
     return publicStore.selectedRows
         .map(productId => productList.value.find(product => product.productId === productId))
@@ -100,6 +101,16 @@ const orderDate = ref({
     orderItems: [], // 初始化为一个空数组
     status: '',
 });
+
+const handleSelect = () => {
+    localStorage.removeItem('token');
+};
+
+const fetchLatestProducts = async () => {
+    await productStore.fetchProductList();
+    // 可以在这里过滤或者处理产品数据
+    activeTabData.value = productStore.products.filter(product => product.status === true);
+};
 
 const submitOrder = async () => {
     const selectedProductDetails = selectedProducts.value;
@@ -125,6 +136,13 @@ const submitOrder = async () => {
 
     await OrderStore.addOrder(orderDate.value)
     message.success("购买成功")
+
+    // 清空选中商品的数量
+    selectedProducts.value.forEach(product => {
+        product.quantity = null;
+    });
+
+    await fetchLatestProducts();
 }
 const handleUpdateValue = (value: string) => {
     orderDate.value.customerId = parseInt(value);
@@ -199,7 +217,7 @@ const columns = ref([
     },
     {
         title: '分类',
-        key: 'category'
+        key: 'categoryName'
     },
     {
         title: '商品描述',
@@ -233,6 +251,7 @@ onMounted(async () => {
     await customerStore.fetchcustomers()
     customerList.value = customerStore.customers
     productList.value = productStore.products.filter((product) => product.status == true);
+    activeTabData.value = productList.value
 })
 
 // 定义不同的图标按钮点击方法
@@ -304,18 +323,23 @@ watch(() => publicStore.selectedRows, (newSelectedRows) => {
 }, { deep: true });
 
 const handleTabShow = async (name) => {
-    activeTab.value = name;
-    if (name == 'oasis') {
-        await productStore.fetchProductList();
-    } else {
-        const categoryItem = category.value.find(item => item.name === name);
-        if (categoryItem) {
-            // 如果找到了对应的项，使用其value值调用fetchProductList
-            categoryProductList.value = await productStore.fetchProductList(categoryItem.value);
+    const selectedCategoryItem = category.value.find(item => item.name === name);
+    if (selectedCategoryItem) {
+        if (selectedCategoryItem.value == 0) {
+            await productStore.fetchProductList()
+            activeTabData.value = productStore.products.filter((product) => product.status == true);
         } else {
-            // 如果没有找到对应项，可能需要处理错误或者设置一个默认行为
-            console.error(`Category with name ${name} not found.`);
+            await productStore.getProductsByCategory(selectedCategoryItem.value)
+            activeTabData.value = productStore.products
+                .filter((product) => product.status == true)
+                .map(product => ({
+                    ...product,
+                    categoryName: category.value.find(cat => cat.value == product.category)?.tab
+                }));
+
         }
+    } else {
+        console.log('No matching category found');
     }
 };
 

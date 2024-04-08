@@ -1,12 +1,17 @@
 import { defineStore } from "pinia";
 import axios from "axios";
+import router, { addDynamicRoutes } from "@/router";
 
 export const useUserStore = defineStore("user", {
   // ref变量 → state 属性
   state: () => ({
     userInfo: null, // 用户信息
     token: "", // 认证令牌
+    role: "guest",
   }),
+  getters: {
+    isLoggedIn: (state) => !!state.token,
+  },
 
   actions: {
     // 登录动作
@@ -20,7 +25,12 @@ export const useUserStore = defineStore("user", {
           ElMessage({
             message: response.data.msg,
             type: "success",
-          });
+          });   
+          this.token = response.data.data.token; // 调整以匹配你的API响应结构
+          this.userInfo = response.data.data.userInfo; // 调整以匹配你的API响应结构
+          this.role = this.userInfo.roleName;
+          addDynamicRoutes(this.role);
+          router.push({ name: "Home" });
         } else {
           ElMessage({
             message: response.data.msg,
@@ -28,8 +38,6 @@ export const useUserStore = defineStore("user", {
           });
         }
 
-        // this.userInfo = response.data.userInfo; // 假设响应中的用户信息在 data.userInfo 中
-        this.token = response.data.data.token; // 假设令牌在 data.token 中
         // 保存 token 到 localStorage，或者使用其他方式保存
         localStorage.setItem("token", this.token);
       } catch (error) {

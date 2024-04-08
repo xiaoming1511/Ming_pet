@@ -1,5 +1,6 @@
-import type { App } from "vue";
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
+import { useUserStore } from "@/stores/modules/user";
+import { dynamicRoutes } from "./dynamicRoutes";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -16,75 +17,16 @@ export const routes: Array<RouteRecordRaw> = [
     path: "/home",
     name: "Home",
     component: () => import("@/views/home/index.vue"),
-    redirect: "/dashboard",
+    redirect: "/home/dashboard", // 修改重定向路径
     meta: { hidden: true, title: "首页" },
     children: [
       {
-        path: "/dashboard",
-        name:"Dashboard",
+        path: "dashboard",
+        name: "Dashboard",
         component: () => import("@/views/dashboard/index.vue"),
-      },
-      {
-        path: "/product",
-        name: "Product",
-        children: [
-          {
-            path: "/product/list",
-            name:'List',
-            component: () => import("@/views/product/list/index.vue"),
-          },
-          {
-            path: "/product/record",
-            name:'Record',
-            component: () => import("@/views/product/record/index.vue"),
-          },
-          {
-            path: "/product/service",
-            name:'Service',
-            component: () => import("@/views/product/service/index.vue"),
-          },
-
-        ],
-      },
-      {
-        path: "/order",
-        name: "Order",
-        component: () => import("@/views/order/index.vue"),
-      },
-      {
-        path: "/pet",
-        name: "Pet",
-        children: [
-          {
-            path: "/pet/list",
-            name:'PetList',
-            component: () => import("@/views/pet/list/index.vue"),
-          },
-          {
-            path: "/pet/warning",
-            name:'PetWarning',
-            component: () => import("@/views/pet/warning/index.vue"),
-          },
-        ],
-      },
-      {
-        path: "/vip",
-        name: "VIP",
-        component: () => import("@/views/vip/index.vue"),
-      },
-      {
-        path: "/workers",
-        name: "Workers",
-        component: () => import("@/views/workers/index.vue"),
-      },
-      {
-        path: "/digital",
-        name: "Digital",
-        component: () => import("@/views/digital/index.vue"),
       },
     ],
   },
-
   {
     path: "/test",
     name: "Test",
@@ -98,16 +40,45 @@ const router = createRouter({
   routes,
 });
 
-/* 初始化路由表 */
-export function resetRouter() {
-  router.getRoutes().forEach((route) => {
-    const { name } = route;
-    if (name) {
-      router.hasRoute(name) && router.removeRoute(name);
+// 添加全局前置守卫来检查权限
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore();
+  const userRoles = userStore.role; // 获取用户角色
+
+  if (!userStore.isLoggedIn && to.name !== "Login") {
+    next({ name: "Login" });
+  } else if (
+    userRoles &&
+    to.meta.roles &&
+    !to.meta.roles.some((role) => userRoles.includes(role))
+  ) {
+    next({ name: "Unauthorized" }); // 或者重定向到其他页面
+  } else {
+    next();
+  }
+});
+
+function checkUserLoggedIn() {
+  const token = localStorage.getItem("token");
+  // 如果 'token' 存在且不为空，则认为用户已登录
+  return token ? true : false;
+}
+
+export function addDynamicRoutes(userRoles: string[]) {
+  console.log("dynamicRoutes", dynamicRoutes);
+  console.log(userRoles);
+
+  dynamicRoutes.forEach((route) => {
+    if (
+      route.meta &&
+      route.meta.roles.some((role) => userRoles.includes(role))
+    ) {
+      if (!router.hasRoute(route.name)) {
+        router.addRoute(route);
+      }
     }
   });
 }
-/* 导出 setupRouter */
-export const setupRouter = (app: App<Element>) => {
-  app.use(router);
-};
+
+/* 导出 Router */
+export default router;
