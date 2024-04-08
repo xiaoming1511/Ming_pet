@@ -1,98 +1,29 @@
 import type { App } from "vue";
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
+import { useUserStoreWidthOut } from "@/stores/modules/user";
+import { basicRoutes } from "./basic";
 
-export const routes: Array<RouteRecordRaw> = [
-  {
-    path: "/",
-    redirect: "/login",
-  },
-  {
-    path: "/login",
-    name: "Login",
-    component: () => import("@/views/login/index.vue"),
-    meta: { hidden: true, title: "登录" },
-  },
-  {
-    path: "/home",
-    name: "Home",
-    component: () => import("@/views/home/index.vue"),
-    redirect: "/dashboard",
-    meta: { hidden: true, title: "首页" },
-    children: [
-      {
-        path: "/dashboard",
-        name:"Dashboard",
-        component: () => import("@/views/dashboard/index.vue"),
-      },
-      {
-        path: "/product",
-        name: "Product",
-        children: [
-          {
-            path: "/product/list",
-            name:'List',
-            component: () => import("@/views/product/list/index.vue"),
-          },
-          {
-            path: "/product/record",
-            name:'Record',
-            component: () => import("@/views/product/record/index.vue"),
-          },
-          {
-            path: "/product/service",
-            name:'Service',
-            component: () => import("@/views/product/service/index.vue"),
-          },
+type RouteRecordRawT = RouteRecordRaw & {
+  meta?: {
+    roles?: string[];
+  };
+};
 
-        ],
-      },
-      {
-        path: "/order",
-        name: "Order",
-        component: () => import("@/views/order/index.vue"),
-      },
-      {
-        path: "/pet",
-        name: "Pet",
-        children: [
-          {
-            path: "/pet/list",
-            name:'PetList',
-            component: () => import("@/views/pet/list/index.vue"),
-          },
-          {
-            path: "/pet/warning",
-            name:'PetWarning',
-            component: () => import("@/views/pet/warning/index.vue"),
-          },
-        ],
-      },
-      {
-        path: "/vip",
-        name: "VIP",
-        component: () => import("@/views/vip/index.vue"),
-      },
-      {
-        path: "/workers",
-        name: "Workers",
-        component: () => import("@/views/workers/index.vue"),
-      },
-      {
-        path: "/digital",
-        name: "Digital",
-        component: () => import("@/views/digital/index.vue"),
-      },
-    ],
-  },
+const modules = import.meta.glob("./modules/**/*.ts", { eager: true });
 
-  {
-    path: "/test",
-    name: "Test",
-    component: () => import("@/components/test/index.vue"),
-    meta: { hidden: true },
-  },
+const routerModuleList: Array<RouteRecordRaw> = [];
+
+Object.keys(modules).forEach((key) => {
+  const mod = modules[key].default || {};
+  const modList = Array.isArray(mod) ? [...mod] : mod;
+  routerModuleList.push(...modList);
+});
+
+export const routes: Array<RouteRecordRawT> = [
+  ...basicRoutes,
+  ...routerModuleList,
 ];
-
+// console.error(routes);
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
@@ -107,6 +38,34 @@ export function resetRouter() {
     }
   });
 }
+
+export function resetAuthRouter() {
+  const userStore = useUserStoreWidthOut();
+  resetRouter();
+  const realUserInfo = userStore.getUserInfo;
+  let listFilter = (list: Array<RouteRecordRawT>) => {
+    return list
+      .map((node) => {
+        return { ...node };
+      })
+      .filter((node) => {
+        const { children, meta } = node;
+        if (Array.isArray(children)) {
+          node.children = listFilter(children);
+        }
+        return (
+          !meta ||
+          !meta.roles ||
+          meta.roles.includes(realUserInfo?.roleName || "")
+        );
+      });
+  };
+  const routes = listFilter([...basicRoutes, ...routerModuleList]);
+  routes.forEach((route) => {
+    router.addRoute(route);
+  });
+}
+
 /* 导出 setupRouter */
 export const setupRouter = (app: App<Element>) => {
   app.use(router);

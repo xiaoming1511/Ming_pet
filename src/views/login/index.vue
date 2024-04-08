@@ -51,6 +51,7 @@ import logo from "@/assets/icons/block.svg?component";
 import type { FormRules } from 'element-plus'
 import { useUserStore } from '@/stores/modules/user';
 import { useRouter } from 'vue-router';
+import { resetAuthRouter } from '@/router';
 
 
 const userStore = useUserStore();
@@ -90,10 +91,11 @@ const rules = reactive<FormRules<userInfo>>({
 const login = async () => {
     try {
         await userStore.login({ username: userInfo.username, password: userInfo.password });
+        resetAuthRouter()
         // 登录成功后的逻辑，比如跳转到主页
-        router.push('/dashboard')
+        router.push('/home')
     } catch (error) {
-
+        console.log(error);
     }
 }
 

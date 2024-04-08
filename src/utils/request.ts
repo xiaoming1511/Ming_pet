@@ -1,6 +1,8 @@
 import axios, { InternalAxiosRequestConfig, AxiosResponse } from "axios";
 import { ElMessage } from "element-plus";
+import { get } from "http";
 import { env } from "process";
+import { App } from "vue";
 
 interface Result {
   code: number;
@@ -19,7 +21,7 @@ enum RequestEnums {
 }
 
 const http = axios.create({
-  baseURL: 'http://localhost:7777',
+  baseURL: "http://localhost:7777",
   timeout: 50000,
   headers: { "Content-Type": "application/json;charset=utf-8" },
 });

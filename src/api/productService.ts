@@ -14,7 +14,7 @@ class productService {
       params: { name: productName },
     });
   }
-  getCategory(){
+  getCategory() {
     return http.get("/products/categories");
   }
   addProduct(productData) {

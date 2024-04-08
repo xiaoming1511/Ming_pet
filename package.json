@@ -30,6 +30,7 @@
   "devDependencies": {
     "@unocss/preset-uno": "^0.58.4",
     "@vitejs/plugin-vue": "^5.0.3",
+    "autoprefixer": "^10.4.19",
     "typescript": "^5.3.3",
     "unplugin-auto-import": "^0.17.5",
     "unplugin-icons": "^0.18.5",

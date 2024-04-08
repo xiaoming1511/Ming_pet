@@ -5,7 +5,7 @@
                 <n-dialog-provider>
                     <transition name="slide">
                         <div class="w-full h-full">
-                            <Menu class="relative fixed-menu"></Menu>
+                            <!-- <Menu class="relative fixed-menu"></Menu> -->
                             <Navigator class="navigation-bar box-border"
                                 :style="{ paddingLeft: sidebarStore.isSidebarExpanded ? `104px` : '250px' }">
                             </Navigator>

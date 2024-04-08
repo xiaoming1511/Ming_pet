@@ -22,6 +22,7 @@ const sidebarStore = useSidebarStore();
 function handleMenuSelect(key: string) {
     // 根据 key 值来决定跳转的目标
     const item = menuOptions.find(option => option.key === key);
+
     if (item) {
         router.push({ name: item.key, params: { lang: 'zh-CN' } });
     }
