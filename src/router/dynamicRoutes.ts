@@ -1,63 +1,65 @@
-import { RouteRecordRaw } from "vue-router";
-
-export const adminRoutes: Array<RouteRecordRaw> = [
-  {
-    path: "/workers",
-    name: "Workers",
-    component: () => import("@/views/workers/index.vue"),
-    meta: { requiresAuth: true, roles: ["admin"] },
-  },
-];
-
-export const userRoutes: Array<RouteRecordRaw> = [
-  {
-    path: "/pet",
-    name: "Pet",
-    meta: { requiresAuth: true, roles: ["user", "admin"] },
-    children: [
-      {
-        path: "list",
-        name: "PetList",
-        component: () => import("@/views/pet/list/index.vue"),
-      },
-      {
-        path: "warning",
-        name: "PetWarning",
-        component: () => import("@/views/pet/warning/index.vue"),
-      },
-    ],
-  },
+export const dynamicRoutes = [
   {
     path: "/product",
     name: "Product",
+    meta: { roles: ["user", "admin"] }, // 用户和管理员均可访问
     children: [
       {
-        path: "/product/list",
+        path: "list", // 修改为相对路径
         name: "List",
         component: () => import("@/views/product/list/index.vue"),
       },
       {
-        path: "/product/record",
+        path: "record", // 修改为相对路径
         name: "Record",
         component: () => import("@/views/product/record/index.vue"),
       },
       {
-        path: "/product/service",
+        path: "service", // 修改为相对路径
         name: "Service",
         component: () => import("@/views/product/service/index.vue"),
       },
     ],
   },
   {
+    path: "/order",
+    name: "Order",
+    meta: { roles: ["user", "admin"] },
+    component: () => import("@/views/order/index.vue"),
+  },
+  {
+    path: "/pet",
+    name: "Pet",
+    meta: { roles: ["user", "admin"] }, // 用户和管理员均可访问
+    children: [
+      {
+        path: "list", // 修改为相对路径
+        name: "PetList",
+        component: () => import("@/views/pet/list/index.vue"),
+      },
+      {
+        path: "warning", // 修改为相对路径
+        name: "PetWarning",
+        component: () => import("@/views/pet/warning/index.vue"),
+      },
+    ],
+  },
+  {
     path: "/vip",
     name: "VIP",
-    meta: { requiresAuth: true, roles: ["user", "admin"] },
+    meta: { roles: ["user", "admin"] },
     component: () => import("@/views/vip/index.vue"),
   },
   {
-    path: "/order",
-    name: "Order",
-    meta: { requiresAuth: true, roles: ["user", "admin"] },
-    component: () => import("@/views/order/index.vue"),
+    path: "/workers",
+    name: "Workers",
+    meta: { roles: ["admin"] }, // 仅管理员可访问
+    component: () => import("@/views/workers/index.vue"),
+  },
+  {
+    path: "/digital",
+    name: "Digital",
+    meta: { roles: ["user", "admin"] },
+    component: () => import("@/views/digital/index.vue"),
   },
 ];

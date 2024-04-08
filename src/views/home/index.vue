@@ -62,9 +62,10 @@ const sidebarStore = useSidebarStore();
     z-index: 1000;
     transition: padding-left 0.4s ease;
 }
+
 /* 解决滚动条超出 */
 .table-container {
-  overflow-y: overlay;
-  overflow-x: auto;
+    overflow-y: overlay;
+    overflow-x: auto;
 }
 </style>

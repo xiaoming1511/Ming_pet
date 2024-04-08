@@ -15,7 +15,11 @@ export const useUserStore = defineStore( {
   state: ():UserState => ({
     userInfo: null, // 用户信息
     token: "", // 认证令牌
+    role: "guest",
   }),
+  getters: {
+    isLoggedIn: (state) => !!state.token,
+  },
 
   actions: {
     // 登录动作
@@ -29,7 +33,12 @@ export const useUserStore = defineStore( {
           ElMessage({
             message: response.data.msg,
             type: "success",
-          });
+          });   
+          this.token = response.data.data.token; // 调整以匹配你的API响应结构
+          this.userInfo = response.data.data.userInfo; // 调整以匹配你的API响应结构
+          this.role = this.userInfo.roleName;
+          addDynamicRoutes(this.role);
+          router.push({ name: "Home" });
         } else {
           ElMessage({
             message: response.data.msg,
