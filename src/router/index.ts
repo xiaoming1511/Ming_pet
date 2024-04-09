@@ -28,42 +28,12 @@ const router = createRouter({
   routes,
 });
 
-// 添加全局前置守卫来检查权限
-router.beforeEach((to, from, next) => {
-  const userStore = useUserStore();
-  const userRoles = userStore.role; // 获取用户角色
-
-  if (!userStore.isLoggedIn && to.name !== "Login") {
-    next({ name: "Login" });
-  } else if (
-    userRoles &&
-    to.meta.roles &&
-    !to.meta.roles.some((role) => userRoles.includes(role))
-  ) {
-    next({ name: "Unauthorized" }); // 或者重定向到其他页面
-  } else {
-    next();
-  }
-});
-
-function checkUserLoggedIn() {
-  const token = localStorage.getItem("token");
-  // 如果 'token' 存在且不为空，则认为用户已登录
-  return token ? true : false;
-}
-
-export function addDynamicRoutes(userRoles: string[]) {
-  console.log("dynamicRoutes", dynamicRoutes);
-  console.log(userRoles);
-
-  dynamicRoutes.forEach((route) => {
-    if (
-      route.meta &&
-      route.meta.roles.some((role) => userRoles.includes(role))
-    ) {
-      if (!router.hasRoute(route.name)) {
-        router.addRoute(route);
-      }
+/* 初始化路由表 */
+export function resetRouter() {
+  router.getRoutes().forEach((route) => {
+    const { name } = route;
+    if (name) {
+      router.hasRoute(name) && router.removeRoute(name);
     }
   });
 }

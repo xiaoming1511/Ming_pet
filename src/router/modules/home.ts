@@ -27,7 +27,7 @@ export default [
             component: () => import("@/views/product/record/index.vue"),
           },
           {
-            path: "/product/service",
+            path: "/home/product/service",
             name: "Service",
             component: () => import("@/views/product/service/index.vue"),
           },

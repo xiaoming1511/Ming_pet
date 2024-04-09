@@ -1,24 +1,26 @@
 import { defineStore } from "pinia";
 import axios from "axios";
-import store from '../index'
+import store from "../index";
 import { Nullable } from "element-plus/es/components/cascader-panel/src/node";
-type UserInfo={
-  roleName:string
-}
-type UserState={
-  userInfo:Nullable<UserInfo>,
-  token?:string
-}
-export const useUserStore = defineStore( {
-  id:'user',
+type UserInfo = {
+  roleName: string;
+};
+type UserState = {
+  userInfo: Nullable<UserInfo>;
+  token?: string;
+};
+export const useUserStore = defineStore({
+  id: "user",
   // ref变量 → state 属性
-  state: ():UserState => ({
+  state: (): UserState => ({
     userInfo: null, // 用户信息
     token: "", // 认证令牌
-    role: "guest",
   }),
   getters: {
     isLoggedIn: (state) => !!state.token,
+    getUserInfo(): Nullable<UserInfo> {
+      return this.userInfo;
+    },
   },
 
   actions: {
@@ -33,12 +35,7 @@ export const useUserStore = defineStore( {
           ElMessage({
             message: response.data.msg,
             type: "success",
-          });   
-          this.token = response.data.data.token; // 调整以匹配你的API响应结构
-          this.userInfo = response.data.data.userInfo; // 调整以匹配你的API响应结构
-          this.role = this.userInfo.roleName;
-          addDynamicRoutes(this.role);
-          router.push({ name: "Home" });
+          });
         } else {
           ElMessage({
             message: response.data.msg,
@@ -56,13 +53,8 @@ export const useUserStore = defineStore( {
       }
     },
   },
-  getters:{
-    getUserInfo():Nullable<UserInfo>{
-      return this.userInfo;
-    }
-  }
 });
 
-export function useUserStoreWidthOut(){
-  return useUserStore(store)
+export function useUserStoreWidthOut() {
+  return useUserStore(store);
 }

@@ -30,7 +30,7 @@ const http = axios.create({
 http.interceptors.request.use(
   (config) => {
     // 使用 console.log 输出请求配置
-    console.log("Request config:", config);
+    // console.log("Request config:", config);
     return config;
   },
   (error) => {
@@ -43,7 +43,7 @@ http.interceptors.request.use(
 http.interceptors.response.use(
   (response) => {
     // 使用 console.log 输出响应数据
-    console.log("Response data:", response.data);
+    // console.log("Response data:", response.data);
     return response;
   },
   (error) => {

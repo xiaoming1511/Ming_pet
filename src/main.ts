@@ -7,7 +7,7 @@ import "@/style/tailwind.css";
 
 import "virtual:svg-icons-register";
 import pinia from "./stores";
-import router from "./router";
+import { setupRouter } from "./router";
 import i18n from "./locales/index";
 
 import { autoImportIcons } from "@/assets/icons";
@@ -18,6 +18,5 @@ autoImportIcons(app);
 app.use(i18n);
 app.use(setupRouter);
 app.use(pinia);
-app.use(router)
 
 app.mount("#app");
