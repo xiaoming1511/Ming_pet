@@ -5,7 +5,9 @@
 <template>
   <n-message-provider>
     <n-modal-provider>
-      <router-view></router-view>
+      <n-dialog-provider>
+        <router-view></router-view>
+      </n-dialog-provider>
     </n-modal-provider>
   </n-message-provider>
 </template>

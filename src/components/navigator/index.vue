@@ -63,8 +63,10 @@ import { useProductStore } from '@/stores/modules/product';
 import { useSidebarStore } from '@/stores/modules/sidebar';
 import { useUserStore } from '@/stores/modules/user';
 import { usePublicStore } from '@/stores/public';
+import { useRouter } from 'vue-router';
 import { NAvatar, NSwitch, NButton, NInputNumber, NText } from 'naive-ui';
 
+const router = useRouter()
 const message = useMessage()
 const userStore = useUserStore()
 const OrderStore = useOrdersStore()
@@ -102,8 +104,24 @@ const orderDate = ref({
     status: '',
 });
 
-const handleSelect = () => {
-    localStorage.removeItem('token');
+const handleSelect = async (item) => {
+    switch (item) {
+        case 'profile':
+            // 调用查看用户资料的方法
+            viewProfile();
+            break;
+        case 'editProfile':
+            // 调用编辑用户资料的方法
+            editProfile();
+            break;
+        case 'logout':
+            // 调用退出登录的方法
+            await userStore.LogOut();
+            router.push('/login');
+            break;
+        default:
+            console.log('Unknown item selected:', item);
+    }
 };
 
 const fetchLatestProducts = async () => {
@@ -193,8 +211,8 @@ const options = [
 ]
 const selectPeople = computed(() => {
     return customerList.value.map(customer => ({
-        label: customer.customerName, // the name of the customer
-        value: customer.customerId    // the unique ID of the customer
+        label: customer.customerName,
+        value: customer.customerId
     }));
 });
 const columns = ref([

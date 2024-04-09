@@ -1,8 +1,6 @@
 import axios, { InternalAxiosRequestConfig, AxiosResponse } from "axios";
 import { ElMessage } from "element-plus";
-import { get } from "http";
 import { env } from "process";
-import { App } from "vue";
 
 interface Result {
   code: number;
@@ -29,26 +27,36 @@ const http = axios.create({
 // 请求拦截器
 http.interceptors.request.use(
   (config) => {
-    // 使用 console.log 输出请求配置
-    // console.log("Request config:", config);
+    if (config.url !== "/login") {
+      const token = localStorage.getItem("token");
+      // 如果token存在，将其添加到请求头中
+      if (token) {
+        config.headers["token"] = `${token}`;
+      }
+    }
     return config;
   },
-  (error) => {
-    console.error("Request error:", error);
+  (error: any) => {
+    // 处理请求错误
     return Promise.reject(error);
   }
 );
 
 // 响应拦截器
 http.interceptors.response.use(
-  (response) => {
-    // 使用 console.log 输出响应数据
-    // console.log("Response data:", response.data);
-    return response;
+  (response: AxiosResponse) => {
+    // 对响应数据做点什么
+    const { code, msg } = response.data;
+    if (code == 200) {
+      return response.data;
+    } else {
+      ElMessage.error(msg || "系统出错");
+      return Promise.reject(new Error(msg || "Error"));
+    }
   },
-  (error) => {
-    console.error("Response error:", error);
-    return Promise.reject(error);
+  (error: any) => {
+    // 处理响应错误
+    return Promise.reject(error.message);
   }
 );
 

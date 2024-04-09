@@ -1,7 +1,9 @@
 import { defineStore } from "pinia";
-import axios from "axios";
 import store from "../index";
 import { Nullable } from "element-plus/es/components/cascader-panel/src/node";
+import loginService from "@/api/loginService";
+import { LogOut } from "@vicons/ionicons5";
+
 type UserInfo = {
   roleName: string;
 };
@@ -27,28 +29,30 @@ export const useUserStore = defineStore({
     // 登录动作
     async login(credentials: { username: string; password: string }) {
       try {
-        const response = await axios.post(
-          "http://localhost:7777/user/login",
-          credentials
-        );
-        if (response.data.code == 200) {
-          ElMessage({
-            message: response.data.msg,
-            type: "success",
-          });
-        } else {
-          ElMessage({
-            message: response.data.msg,
-            type: "warning",
-          });
-        }
+        const request = await loginService.login(credentials);
 
-        this.userInfo = response.data.data.userInfo; // 假设响应中的用户信息在 data.userInfo 中
-        this.token = response.data.data.token; // 假设令牌在 data.token 中
-        // 保存 token 到 localStorage，或者使用其他方式保存
-        localStorage.setItem("token", this.token);
+        if (request.code == 200) {
+          this.userInfo = request.data.userInfo;
+          this.token = request.data.token;
+          localStorage.setItem("token", this.token);
+          ElMessage.success(request.msg);
+        } else {
+          ElMessage.warning(request.msg);
+        }
       } catch (error) {
         console.error("登录请求失败:", error);
+        throw error;
+      }
+    },
+    async LogOut() {
+      try {
+        const request = await loginService.logout();
+        this.userInfo = null;
+        this.token = null;
+        localStorage.removeItem("token");
+        ElMessage.success("退出成功");
+      } catch (error) {
+        console.error("退出登录请求失败:", error);
         throw error;
       }
     },
