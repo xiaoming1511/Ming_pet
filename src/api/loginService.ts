@@ -7,6 +7,9 @@ class LoginService {
   logout() {
     return http.post("/user/logout");
   }
+  register(data) {
+    return http.post("/user/register", data);
+  }
 }
 
 export default new LoginService();

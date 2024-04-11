@@ -56,6 +56,10 @@ export const useUserStore = defineStore({
         throw error;
       }
     },
+    async register(data) {
+      const request = await loginService.register(data);
+      console.log(request);
+    },
   },
 });
 

@@ -8,7 +8,7 @@
                     </n-icon>
                 </template>
             </n-switch>
-            <h3 class="text-base">aaa,欢迎使用宠易萌宠物管理系统！</h3>
+            <h3 class="text-base">{{ userStore.userInfo && userStore.userInfo.username }}，欢迎使用宠易萌宠物管理系统！</h3>
         </n-space>
         <n-space class="h-16 items-center justify-end">
             <n-button quaternary circle v-for="(item, index) in Icons" :focusable="false"
@@ -18,9 +18,8 @@
                 </template>
             </n-button>
             <n-dropdown :options="options" @select="handleSelect">
-                <n-avatar round size="large" src="https://s11.ax1x.com/2024/02/05/pFlTtZn.jpg" />
-                <!-- <n-avatar round size="large"
-                    :src="userStore.userInfo.avatar ? userStore.userInfo.avatar : 'https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg'" /> -->
+                <n-avatar round size="large"
+                    :src="userStore.userInfo?.avatar || 'https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg'" />
             </n-dropdown>
         </n-space>
         <n-drawer v-model:show="active" :default-width="1100" resizable close-on-esc :max-width="1260" :min-width="800"

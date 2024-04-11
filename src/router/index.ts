@@ -65,6 +65,31 @@ export function resetAuthRouter() {
   });
 }
 
+// 路由守卫
+// router.beforeEach((to, from, next) => {
+//   const userStore = useUserStoreWidthOut();
+//   // 检查用户是否已经登录（假设token存储在Pinia的userStore或localStorage中）
+//   const hasToken = userStore.token || localStorage.getItem('token');
+
+//   if (hasToken) {
+//     if (to.path === '/login') {
+//       // 如果已登录且目标路径是登录页，跳转到首页
+//       next({ path: '/' });
+//     } else {
+//       // 如果已登录且目标路径不是登录页，直接前往目标页面
+//       next();
+//     }
+//   } else {
+//     if (to.meta.roles) {
+//       // 如果目标路由需要权限，而用户没有token，则重定向到登录页面
+//       next(`/login?redirect=${to.path}`);
+//     } else {
+//       // 如果目标路由不需要权限，任何用户都可以访问
+//       next();
+//     }
+//   }
+// });
+
 /* 导出 setupRouter */
 export const setupRouter = (app: App<Element>) => {
   app.use(router);

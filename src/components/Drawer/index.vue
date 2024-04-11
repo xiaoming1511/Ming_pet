@@ -1,14 +1,13 @@
 <template>
     <div>
-        <test></test>
-        <drawer></drawer>
+        test
     </div>
 </template>
 
 <script setup lang="ts">
 
-
-
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>
