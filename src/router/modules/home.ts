@@ -8,7 +8,11 @@ export default [
       {
         path: "/home/dashboard",
         name: "Dashboard",
-        meta: { title: "首页" },
+        meta: {
+          hidden: true,
+          title: "首页",
+          roles: ["user", "admin"],
+        },
         component: () => import("@/views/dashboard/index.vue"),
       },
       {
@@ -64,7 +68,7 @@ export default [
       },
       {
         path: "/home/pet",
-        // name: "Pet",
+        name: "Pet",
         meta: {
           requiresAuth: true,
           roles: ["user", "admin"],

@@ -15,8 +15,8 @@ export const useUserStore = defineStore({
   id: "user",
   // ref变量 → state 属性
   state: (): UserState => ({
-    userInfo: null, // 用户信息
-    token: "", // 认证令牌
+    userInfo: JSON.parse(localStorage.getItem("userInfo")) || null,
+    token: localStorage.getItem("token") || "",
   }),
   getters: {
     isLoggedIn: (state) => !!state.token,
@@ -34,6 +34,7 @@ export const useUserStore = defineStore({
         if (request.code == 200) {
           this.userInfo = request.data.userInfo;
           this.token = request.data.token;
+          localStorage.setItem("userInfo", JSON.stringify(this.userInfo));
           localStorage.setItem("token", this.token);
           ElMessage.success(request.msg);
         } else {
@@ -49,6 +50,7 @@ export const useUserStore = defineStore({
         const request = await loginService.logout();
         this.userInfo = null;
         this.token = null;
+        localStorage.removeItem("userInfo");
         localStorage.removeItem("token");
         ElMessage.success("退出成功");
       } catch (error) {
@@ -57,8 +59,17 @@ export const useUserStore = defineStore({
       }
     },
     async register(data) {
-      const request = await loginService.register(data);
-      console.log(request);
+      try {
+        const request = await loginService.register(data);
+        if (request.code === 200) {
+          ElMessage.success("注册成功");
+        } else {
+          ElMessage.warning(request.msg);
+        }
+      } catch (error) {
+        ElMessage.error("注册请求失败");
+        console.error("注册请求失败:", error);
+      }
     },
   },
 });

@@ -105,7 +105,7 @@ import { useI18n } from 'vue-i18n'
 import GlobalizationIcon from "@/assets/icons/globalization.svg?component";
 import type { FormRules } from 'element-plus'
 import { useUserStore } from '@/stores/modules/user';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { resetAuthRouter } from '@/router';
 import { use } from 'echarts';
 
@@ -113,6 +113,7 @@ const userStore = useUserStore();
 const { locale } = useI18n()
 const message = useMessage();
 const router = useRouter();
+const route = useRoute()
 
 const topic = ref(true)
 const switchShow = ref(true);
@@ -174,7 +175,8 @@ const login = async () => {
         await userStore.login({ username: LoginformValue.username, password: LoginformValue.password });
         resetAuthRouter()
         // 登录成功后的逻辑，比如跳转到主页
-        router.push('/home')
+        const redirect = route.query.redirect || '/home/dashboard'
+        router.push(redirect)
     } catch (error) {
         console.log(error);
     }

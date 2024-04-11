@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
-import { useUserStoreWidthOut } from "@/stores/modules/user";
+import { useUserStore, useUserStoreWidthOut } from "@/stores/modules/user";
 import { basicRoutes } from "./basic";
 
 type RouteRecordRawT = RouteRecordRaw & {
@@ -65,30 +65,31 @@ export function resetAuthRouter() {
   });
 }
 
-// 路由守卫
-// router.beforeEach((to, from, next) => {
-//   const userStore = useUserStoreWidthOut();
-//   // 检查用户是否已经登录（假设token存储在Pinia的userStore或localStorage中）
-//   const hasToken = userStore.token || localStorage.getItem('token');
+// 添加全局前置守卫
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStoreWidthOut();
+  const isLoggedIn = userStore.isLoggedIn; // 假设你有一个getter来检查用户是否登录
+  const userInfo = userStore.getUserInfo; // 获取用户信息
 
-//   if (hasToken) {
-//     if (to.path === '/login') {
-//       // 如果已登录且目标路径是登录页，跳转到首页
-//       next({ path: '/' });
-//     } else {
-//       // 如果已登录且目标路径不是登录页，直接前往目标页面
-//       next();
-//     }
-//   } else {
-//     if (to.meta.roles) {
-//       // 如果目标路由需要权限，而用户没有token，则重定向到登录页面
-//       next(`/login?redirect=${to.path}`);
-//     } else {
-//       // 如果目标路由不需要权限，任何用户都可以访问
-//       next();
-//     }
-//   }
-// });
+  const isPublic = to.matched.some((record) => record.meta.requiresAuth);
+
+  if (isPublic) {
+    // 检查路由是否需要认证
+    if (!isLoggedIn) {
+      // 用户未登录，重定向到登录页面，并携带要重定向的路由路径
+      next({ name: "Login", query: { redirect: to.fullPath } });
+    } else if (to.meta.roles && !to.meta.roles.includes(userInfo.roleName)) {
+      // 用户没有权限访问当前路由，重定向到无权限页面
+      next({ name: "Prohibition" });
+    } else {
+      // 用户已登录且有权限，放行
+      next();
+    }
+  } else {
+    // 路由不需要认证，直接放行
+    next();
+  }
+});
 
 /* 导出 setupRouter */
 export const setupRouter = (app: App<Element>) => {
