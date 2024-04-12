@@ -1,8 +1,8 @@
 <template>
     <div>
-        <Table :columns="columns" :data="data"></Table>
+        <Table :columns="columns" :data="data" :row-key="row => row.id"></Table>
         <n-flex justify="end">
-            <n-select class="w-64" @update:value="handleUpdateValue" filterable :size="large" :options="petList"
+            <n-select class="w-64" @update:value="handleUpdateValue" filterable :options="petList"
                 :render-label="renderLabel" :render-tag="renderSingleSelectTag" placeholder="请选择宠物" />
         </n-flex>
     </div>
@@ -28,9 +28,6 @@ const petList = computed(() => {
 })
 
 const columns = ref([
-    {
-        type: 'selection',
-    },
     {
         title: '宠物',
         key: 'petName'
@@ -173,6 +170,15 @@ const submitService = async (row) => {
         }
     } else {
         console.log('No services found with matching petId.');
+    }
+}
+
+const showDeleteConfirm = async (row) => {
+    const index = data.value.findIndex(item => item.id === row.id);
+    if (index !== -1) {
+        data.value.splice(index, 1);
+    } else {
+        console.log('Item not found');
     }
 }
 onMounted(async () => {

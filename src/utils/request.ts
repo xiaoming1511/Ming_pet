@@ -1,6 +1,6 @@
+import router from "@/router";
 import axios, { InternalAxiosRequestConfig, AxiosResponse } from "axios";
 import { ElMessage } from "element-plus";
-import { env } from "process";
 
 interface Result {
   code: number;
@@ -27,11 +27,12 @@ const http = axios.create({
 // 请求拦截器
 http.interceptors.request.use(
   (config) => {
-    if (config.url !== "/login") {
+    // 不对登录接口添加token
+    if (config.url !== "/login" && config.url !== "/user/login") {
+      // 确保匹配到准确的登录路由
       const token = localStorage.getItem("token");
-      // 如果token存在，将其添加到请求头中
       if (token) {
-        config.headers["token"] = `${token}`;
+        config.headers["token"] = token;
       }
     }
     return config;
@@ -47,16 +48,28 @@ http.interceptors.response.use(
   (response: AxiosResponse) => {
     // 对响应数据做点什么
     const { code, msg } = response.data;
-    if (code == 200) {
+    if (code === 200) {
       return response.data;
     } else {
       ElMessage.error(msg || "系统出错");
+      router.push("/login");
       return Promise.reject(new Error(msg || "Error"));
     }
   },
   (error: any) => {
-    // 处理响应错误
-    return Promise.reject(error.message);
+    // 如果响应状态码是401，进行相应处理，比如跳转到登录页
+    if (error.response && error.response.status === 401) {
+      // 可能需要清除本地存储的状态
+      localStorage.removeItem("token");
+      localStorage.removeItem("userInfo");
+      ElMessage.error("登录已过期，请重新登录");
+      // 如果你使用Vue Router可以如此跳转
+      router.push("/login");
+    } else {
+      // 对于其他类型的响应错误，显示错误消息
+      ElMessage.error(error.message);
+    }
+    return Promise.reject(error);
   }
 );
 

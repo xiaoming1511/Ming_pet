@@ -1,6 +1,6 @@
 <template>
     <div>
-        <n-flex class="box px-6" justify="space-around" size="large">
+        <n-flex class="box p5" justify="space-around" size="large">
             <n-card class="rounded-xl" size="huge">
                 <div class="panle">
                     <div class="panle_title text-left pb-3">

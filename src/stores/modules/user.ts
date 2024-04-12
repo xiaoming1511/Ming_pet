@@ -30,7 +30,6 @@ export const useUserStore = defineStore({
     async login(credentials: { username: string; password: string }) {
       try {
         const request = await loginService.login(credentials);
-
         if (request.code == 200) {
           this.userInfo = request.data.userInfo;
           this.token = request.data.token;

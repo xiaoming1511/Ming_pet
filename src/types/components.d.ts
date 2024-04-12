@@ -113,6 +113,7 @@ declare module 'vue' {
     NTransfer: typeof import('naive-ui')['NTransfer']
     NTreeSelect: typeof import('naive-ui')['NTreeSelect']
     NUpload: typeof import('naive-ui')['NUpload']
+    OrderChart: typeof import('./../components/chart/orderChart.vue')['default']
     ProductAdd: typeof import('../components/addModal/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

@@ -1,13 +1,11 @@
 <template>
-    <div>
+    <div class="flex pt7">
         <test></test>
-        <drawer></drawer>
+        <OrderChart></OrderChart>
     </div>
 </template>
 
 <script setup lang="ts">
-
-
 
 </script>
 

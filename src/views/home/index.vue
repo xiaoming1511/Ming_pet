@@ -3,11 +3,11 @@
         <transition name="slide">
             <div class="w-full h-full">
                 <Menu class="relative fixed-menu"></Menu>
-                <Navigator class="navigation-bar box-border"
-                    :style="{ paddingLeft: sidebarStore.isSidebarExpanded ? `104px` : '250px' }">
-                </Navigator>
-                <n-flex class="hmain" :style="{ marginLeft: sidebarStore.isSidebarExpanded ? `64px` : '210px' }">
-                    <router-view class="bg-gray-100 pt-5"></router-view>
+                <n-flex class="hmain w-full h-full" :style="mainStyle">
+                    <Navigator class="pos-absolute top-0 left-0 navigator" :style="navigatorStyle" />
+                    <div class="router-view" :style="viewStyle">
+                        <router-view class="bg-gray-100 h-full"></router-view>
+                    </div>
                 </n-flex>
             </div>
         </transition>
@@ -19,15 +19,46 @@ import { useSidebarStore } from '@/stores/modules/sidebar';
 
 const sidebarStore = useSidebarStore();
 
+const marginLeft = computed(() => sidebarStore.isSidebarExpanded ? '64px' : '210px');
+const mainStyle = computed(() => ({
+    marginLeft: marginLeft.value,
+}));
+
+const navigatorStyle = computed(() => ({
+    marginLeft: marginLeft.value,
+    width: `calc(100vw - ${marginLeft.value})`,
+}));
+
+const viewStyle = computed(() => ({
+    marginLeft: marginLeft.value,
+    width: `calc(100vw - ${marginLeft.value})`,
+    top: '64px',
+    height: 'calc(100vh - 64px)',
+    overflow: 'auto'
+}));
 </script>
 
 <style scoped>
-@import '@/style/login.css';
-
 .hmain {
     display: block !important;
-    transition: margin-left 0.4s ease;
-    padding-top: 64px;
+    transition: all 0.4s ease;
+}
+
+.navigator {
+    transition: all 0.4s ease;
+    z-index: 1000;
+}
+
+.router-view {
+    position: absolute;
+    right: 0;
+    top: 64px;
+    width: 100%;
+    height: calc(100vh - 64px);
+    /* 100vh是视口的全部高度，64px是Navigator的高度 */
+    overflow: auto;
+    /* 如果内容超出高度，允许滚动 */
+    transition: all 0.4s ease;
 }
 
 :deep(.n-card__content) {
@@ -45,15 +76,6 @@ const sidebarStore = useSidebarStore();
     left: 0;
     height: 100vh;
     z-index: 1001;
-}
-
-.navigation-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000;
-    transition: padding-left 0.4s ease;
 }
 
 /* 解决滚动条超出 */

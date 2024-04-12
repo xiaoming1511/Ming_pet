@@ -91,7 +91,5 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-/* 导出 setupRouter */
-export const setupRouter = (app: App<Element>) => {
-  app.use(router);
-};
+/* 导出 router */
+export default router;
