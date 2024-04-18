@@ -2,7 +2,7 @@
     <div>
         <n-drawer v-model:show="sidebarStore.active" :default-width="1100" resizable close-on-esc :max-width="1260"
             :min-width="800">
-            <n-drawer-content title="购买商品" closable>
+            <n-drawer-content title="服务" closable>
                 <n-card style="margin-bottom: 16px">
                     <n-tabs type="line" animated @update:value="handleUpdateServiceTab">
                         <n-tab-pane name="Optional Products" tab="选购商品">

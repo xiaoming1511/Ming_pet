@@ -18,6 +18,9 @@ class orderService {
   deleteOrder(OrderId) {
     return http.delete(`/orders/delete/${OrderId}`);
   }
+  salesByDate(date) {
+    return http.get("/orders/salesByDate", { params: { date } });
+  }
 }
 
 export default new orderService();

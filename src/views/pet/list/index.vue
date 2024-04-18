@@ -270,7 +270,6 @@ const addPet = (fromDate) => {
     publicStore.openAddModal(fromDate)
 }
 const handleSubmit = async () => {
-
     const { id, createdAt, deleted, isDeleted, updatedAt, ...item } = publicStore.itemList;
     fromDate.value = item
 
@@ -285,7 +284,6 @@ const handleSubmit = async () => {
     getAllPets()
     publicStore.changeShowModal()
 }
-
 
 const getOwnerList = async () => {
     await customersStore.fetchcustomers()

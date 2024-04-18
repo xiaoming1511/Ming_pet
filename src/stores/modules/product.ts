@@ -6,6 +6,7 @@ export const useProductStore = defineStore("product", {
   state: () => ({
     products: [],
     categories: [],
+    productStocks: [],
   }),
 
   getters: {
@@ -14,8 +15,9 @@ export const useProductStore = defineStore("product", {
 
   actions: {
     async fetchProductList() {
-      const request = await productService.getProductList()
+      const request = await productService.getProductList();
       this.products = request.data
+      this.updateProductStocks();
     },
     async addProductItem(productData) {
       try {
@@ -53,15 +55,21 @@ export const useProductStore = defineStore("product", {
     },
     async getProductsByName(productName) {
       const request = await productService.getProductsByName(productName);
-      this.products = request.data
+      this.products = request.data;
     },
-    async getProductsByCategory(category){
-      const request = await productService.getProductsByCategory(category)
-      this.products = request.data
+    async getProductsByCategory(category) {
+      const request = await productService.getProductsByCategory(category);
+      this.products = request.data;
     },
     async getCategory() {
       const request = await productService.getCategory();
       this.categories = request.data;
+    },
+    async updateProductStocks() {
+      this.productStocks = this.products.map((product) => ({
+        name: product.productName, // 假设商品对象有一个 'name' 属性
+        value: product.stockQuantity, // 假设商品对象有一个 'stockQuantity' 属性
+      }));     
     },
   },
 });

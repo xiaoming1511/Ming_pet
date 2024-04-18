@@ -1,10 +1,12 @@
 import { defineStore } from "pinia";
 import ordersService from "@/api/orderService";
+import { DateUtils } from "@/utils/dateUtils";
 
 export const useOrdersStore = defineStore("orders", {
   id: "orders",
   state: () => ({
     orders: [],
+    salesData: [],
   }),
 
   getters: {
@@ -32,7 +34,27 @@ export const useOrdersStore = defineStore("orders", {
     },
     async searchByKey(keyword) {
       const request = await ordersService.searchByKey(keyword);
-      this.orders = request.data
+      this.orders = request.data;
+    },
+    async salesByDate(date) {
+      const request = await ordersService.salesByDate(date);
+      return request.data;
+    },
+    async fetchDateSales() {
+      try {
+        const lastSevenDays = DateUtils.getLastSevenDays();
+        const salesPromises = lastSevenDays.map((day) =>
+          ordersService.salesByDate(day)
+        );
+        const dateSalesResponses = await Promise.all(salesPromises);
+        this.salesData = dateSalesResponses.map((response) => response.data);
+      } catch (error) {
+        console.error("Failed to fetch sales data:", error);
+      }
+    },
+    async updateSalesData() {
+      // 当购买请求发起后，重新获取最新的销售数据
+      await this.fetchDateSales();
     },
   },
 });

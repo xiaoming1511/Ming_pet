@@ -1,48 +1,21 @@
 <template>
-  <!-- <div ref="chartContainer"></div> -->
   <div ref="chartRef" style="width:600px; height:400px;"></div>
 </template>
 
 <script setup lang="ts">
-import { Chart } from '@antv/g2';
+import { useProductStore } from '@/stores/modules/product';
 import * as echarts from 'echarts';
-import { title } from 'process';
+const productStore = useProductStore()
 
-const chartContainer = ref<HTMLElement | null>(null);
 const chartRef = ref<HTMLElement>();
 
-onMounted(() => {
-  if (chartContainer.value) {
-    const chart = new Chart({
-      container: chartContainer.value,
-      width: 600,
-      height: 300,
-    });
+onMounted(async () => {
+  await productStore.fetchProductList();
 
-    // 定义数据
-    const data = [
-      { genre: 'Sports', sold: 275 },
-      { genre: 'Strategy', sold: 115 },
-      { genre: 'Action', sold: 120 },
-      { genre: 'Shooter', sold: 350 },
-      { genre: 'Other', sold: 150 },
-    ];
 
-    // 定义图表
-    // 声明可视化
-    chart
-      .interval() // 创建一个 Interval 标记
-      .data(data) // 绑定数据
-      .encode('x', 'genre') // 编码 x 通道
-      .encode('y', 'sold'); // 编码 y 通道
-    chart.render();
-  }
 
   const chart = echarts.init(chartRef.value as HTMLElement);
   const option = {
-    title: {
-      text: '饼图',
-    },
     tooltip: {
       trigger: 'item'
     },
@@ -52,7 +25,7 @@ onMounted(() => {
     },
     series: [
       {
-        name: 'Access From',
+        name: '库存',
         type: 'pie',
         radius: ['40%', '70%'],
         avoidLabelOverlap: false,
@@ -74,13 +47,7 @@ onMounted(() => {
         labelLine: {
           show: false
         },
-        data: [
-          { value: 1048, name: '猫粮' },
-          { value: 735, name: '狗粮' },
-          { value: 580, name: '猫条' },
-          { value: 484, name: '猫抓板' },
-          { value: 300, name: 'Video Ads' }
-        ]
+        data: productStore.productStocks
       }
     ]
   };
@@ -90,5 +57,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 你的样式 */
+
 </style>

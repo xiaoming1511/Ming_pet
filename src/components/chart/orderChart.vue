@@ -5,17 +5,32 @@
 </template>
 
 <script setup lang="ts">
+import { useOrdersStore } from '@/stores/modules/orders';
 import * as echarts from 'echarts';
+import { DateUtils } from '@/utils/dateUtils';
+const ordersStore = useOrdersStore()
 
 const barChartRef = ref(null);
 
-onMounted(() => {
+const getDateSales = async () => {
+    const lastSevenDays = getLastSevenDays();
+    const salesPromises = lastSevenDays.map(day => {
+        return ordersStore.salesByDate(day);
+    });
+    const dateSales = await Promise.all(salesPromises);
+    return dateSales; // 返回每一天的销售额数组
+}
+
+onMounted(async () => {
+    await ordersStore.fetchDateSales()
+
     if (barChartRef.value) {
         const barChart = echarts.init(barChartRef.value);
+        const lastSevenDays = DateUtils.getLastSevenDays()
+        // 异步获取销售数据
+
+        // 使用销售数据更新ECharts图表
         barChart.setOption({
-            title: {
-                text: '销售日期与销售额'
-            },
             tooltip: {
                 trigger: 'axis',
                 axisPointer: {
@@ -30,7 +45,7 @@ onMounted(() => {
             },
             xAxis: {
                 type: 'category',
-                data: ['2024-04-05', '2024-04-06', '2024-04-07', '2024-04-08', '2024-04-09', '2024-04-10', '2024-04-11', '2024-04-12']
+                data: lastSevenDays
             },
             yAxis: {
                 type: 'value'
@@ -38,9 +53,11 @@ onMounted(() => {
             series: [{
                 name: '销售额',
                 type: 'bar',
-                data: [0, 0, 0, 0, 0, 0, 0, 3],
+                barWidth: '50%',
+                data: ordersStore.salesData, // 将异步获取的销售数据赋值给series.data
                 itemStyle: {
-                    color: '#5470C6'
+                    color: 'rgb(250, 204, 13)',
+                    borderRadius: [50, 50, 0, 0]
                 }
             }]
         });

@@ -70,4 +70,19 @@ export class DateUtils {
   private static isLeapYear(year: number): boolean {
     return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
   }
+
+  /**
+   * 获取最近七天的日期数组，格式为 'yyyy-MM-dd'
+   * @returns 日期数组
+   */
+  static getLastSevenDays(): string[] {
+    const dates: string[] = [];
+    const today = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      dates.push(this.formatDate(date));
+    }
+    return dates;
+  }
 }
