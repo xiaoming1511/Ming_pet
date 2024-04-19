@@ -21,7 +21,6 @@ enum RequestEnums {
 const http = axios.create({
   baseURL: "http://localhost:7777",
   timeout: 50000,
-  headers: { "Content-Type": "application/json;charset=utf-8" },
 });
 
 // 请求拦截器
@@ -48,20 +47,18 @@ http.interceptors.response.use(
   (response: AxiosResponse) => {
     // 对响应数据做点什么
     const { code, msg } = response.data;
-    if (code === 200) {
-      return response.data;
-    } else {
+    if (code !== 200) {
       ElMessage.error(msg || "系统出错");
       router.push("/login");
       return Promise.reject(new Error(msg || "Error"));
     }
+    return response.data;
   },
   (error: any) => {
     // 如果响应状态码是401，进行相应处理，比如跳转到登录页
-    if (error.response && error.response.status === 401) {
+    if (error.response?.status === 401) {
       // 可能需要清除本地存储的状态
-      localStorage.removeItem("token");
-      localStorage.removeItem("userInfo");
+      localStorage.clear();
       ElMessage.error("登录已过期，请重新登录");
       // 如果你使用Vue Router可以如此跳转
       router.push("/login");

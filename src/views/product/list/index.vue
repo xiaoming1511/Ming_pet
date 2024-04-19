@@ -43,8 +43,7 @@
             <template #form-content>
                 <div>
                     <n-form-item label="商品图片：" path="inputValue">
-                        <n-upload action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f"
-                            :default-file-list="previewFileList" list-type="image-card" />
+                        <Upload></Upload>
                     </n-form-item>
                     <n-form-item label="商品名称：" path="productName">
                         <n-input v-model:value="publicStore.itemList.productName" placeholder="请输入商品名称" />
@@ -190,16 +189,6 @@ function getCategoryValue(categoryName) {
 function addProduct() {
     publicStore.openAddModal(formModel.value)
 }
-
-// 上传图片
-const previewFileList = ref<UploadFileInfo[]>([
-    {
-        id: 'react',
-        name: '我是react.png',
-        status: 'finished',
-        url: 'https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg'
-    },
-])
 
 onMounted(async () => {
     await productStore.fetchProductList();

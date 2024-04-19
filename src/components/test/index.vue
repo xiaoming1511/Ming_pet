@@ -5,15 +5,14 @@
 <script setup lang="ts">
 import { useProductStore } from '@/stores/modules/product';
 import * as echarts from 'echarts';
+
 const productStore = useProductStore()
+
 
 const chartRef = ref<HTMLElement>();
 
 onMounted(async () => {
   await productStore.fetchProductList();
-
-
-
   const chart = echarts.init(chartRef.value as HTMLElement);
   const option = {
     tooltip: {
@@ -56,6 +55,4 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
