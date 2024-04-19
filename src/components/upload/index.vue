@@ -41,12 +41,15 @@ const beforeUpload = (file) => {
     return true;
 };
 
-const customRequest = async (options) => {
+const customRequest = async ({ file, onProgress, onError, onSuccess }) => {
+    const formData = new FormData();
+    formData.append('img', file); // 'img'是后端接收文件的字段名
+    console.log(formData);
+
     try {
-        const response = await upLoadStore.upLoadImage(options.file);
-        options.onSuccess(response, options.file);
+        const response = await upLoadStore.upLoadImage(formData);
     } catch (error) {
-        options.onError(error);
+
     }
 };
 </script>

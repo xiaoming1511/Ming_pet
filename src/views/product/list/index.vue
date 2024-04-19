@@ -210,7 +210,7 @@ const handleEdit = (row) => {
         ...rest,
         category: getCategoryValue(categoryName)
     };
-    
+
     publicStore.openEditModal(publicStore.itemList)
 }
 // 提交
@@ -306,4 +306,8 @@ function mapProductWithCategory(product) {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+:deep(.n-button) {
+    margin: 0 7px 0;
+}
+</style>

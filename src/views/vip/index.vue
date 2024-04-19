@@ -178,4 +178,8 @@ const handleSearch = async () => {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+:deep(.n-button) {
+    margin: 0 7px 0;
+}
+</style>

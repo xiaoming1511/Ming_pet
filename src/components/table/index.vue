@@ -42,11 +42,10 @@ watch(() => props.selectedRowKeys, (newVal) => {
 
 </script>
 
-<style scoped>
-:deep(.n-data-table-td--last-col){
-    display: flex;
-    align-items: center;
-    justify-content: center;    
-    gap: 1rem;
+<style scoped lang="scss">
+:deep(.n-data-table-td--last-col) {
+    .n-button{
+        margin: 0 7px 0;
+    }
 }
 </style>
