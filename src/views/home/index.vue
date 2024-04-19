@@ -6,7 +6,7 @@
                 <n-flex class="hmain w-full h-full" :style="mainStyle">
                     <Navigator class="pos-absolute top-0 left-0 navigator" :style="navigatorStyle" />
                     <div class="router-view" :style="viewStyle">
-                        <router-view class="bg-gray-100 h-full"></router-view>
+                        <router-view class="bg-gray-100"></router-view>
                     </div>
                 </n-flex>
             </div>

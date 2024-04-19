@@ -3,8 +3,10 @@
         <n-space>
             <n-switch v-model:value="sidebarStore.isSidebarExpanded">
                 <template #icon>
-                    <n-icon size="10">
-                        <IconAdd></IconAdd>
+                    <n-icon size="20">
+                        <IconSwitch
+                            :class="{ 'rotate-clockwise-animation': sidebarStore.isSidebarExpanded, 'rotate-anticlockwise-animation': !sidebarStore.isSidebarExpanded }">
+                        </IconSwitch>
                     </n-icon>
                 </template>
             </n-switch>
@@ -37,7 +39,7 @@ const message = useMessage()
 const userStore = useUserStore()
 const sidebarStore = useSidebarStore();
 
-const iconNames = ['Sousuo', 'Xinxi', 'Qianbao'];
+const iconNames = ['Search', 'Xinxi', 'Qianbao'];
 const Icons = computed(() => iconNames.map(name => `Icon${name}`));
 
 const handleSelect = async (item) => {
@@ -75,8 +77,6 @@ const options = [
     }
 ]
 
-
-
 // 定义不同的图标按钮点击方法
 const onSearchClick = () => console.log('搜索被点击');
 const onMessageClick = () => console.log('信息被点击');
@@ -107,6 +107,34 @@ const handleIconClick = (iconName: string) => {
     svg {
         width: 100%;
         height: 100%;
+    }
+}
+
+.rotate-clockwise-animation {
+    animation: rotate-clockwise 0.5s ease-out;
+}
+
+.rotate-anticlockwise-animation {
+    animation: rotate-anticlockwise 0.5s ease-out;
+}
+
+@keyframes rotate-clockwise {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes rotate-anticlockwise {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(-360deg);
     }
 }
 </style>

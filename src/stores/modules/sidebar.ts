@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 
 export const useSidebarStore = defineStore("sidebar", {
-  // ref变量 → state 属性
   state: () => ({
     isSidebarExpanded: false, // 初始状态
     active: false,
@@ -14,9 +13,6 @@ export const useSidebarStore = defineStore("sidebar", {
   },
 
   actions: {
-    toggleSidebar() {
-      this.isSidebarExpanded = !this.isSidebarExpanded;
-    },
     changeActive() {
       this.active = !this.active;
     },

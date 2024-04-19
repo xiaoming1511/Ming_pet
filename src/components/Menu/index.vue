@@ -21,33 +21,44 @@ import {
     HomeOutline as HomeIcon
 } from '@vicons/ionicons5'
 import { RouterLink } from 'vue-router';
-
 import { useSidebarStore } from '@/stores/modules/sidebar';
+
 const message = useMessage()
 const router = useRouter();
 const sidebarStore = useSidebarStore();
 const filteredRoutes = ref([])
 const menuOptions = ref<MenuOption[]>()
 
-const renderIcon = (icon: Component) => {
+const icons = import.meta.glob("@/assets/icons/menuIcon/*.svg", { eager: true });
+const iconComponents: Record<string, Component> = {};
+
+Object.entries(icons).forEach(([path, resolve]) => {
+  const iconName = path.split('/').pop()?.split('.')[0];
+  if (iconName) {
+    iconComponents[iconName] = defineAsyncComponent(() => Promise.resolve(resolve.default));
+  }
+});
+
+const renderIcon = (iconName: string) => {
+    const icon = iconComponents[iconName];
     if (!icon) {
-        console.error('Icon component is null');
+        console.error(`没有找到名为 '${iconName}' 的图标组件`);
         return;
     }
+    // 使用 NIcon 包装 SVG 图标组件
     return () => h(NIcon, null, { default: () => h(icon) });
-}
+};
 
-// 递归函数来构建菜单
-const buildMenu = (routes: any[]): MenuOption[] => { // 如果有类型定义请替换any
+// 递归函数构建菜单，其余代码基本保持不变
+const buildMenu = (routes: any[]): MenuOption[] => {
     return routes.map(route => {
         const hasChildren = route.children && route.children.length > 0;
         const menuOption: MenuOption = {
             label: route.meta.title || route.name,
             key: route.path,
-            icon: renderIcon(BookIcon), // 适当替换图标
+            icon: route.meta.icon ? renderIcon(route.meta.icon) : undefined, // 使用图标名称来渲染图标
         };
 
-        // 只有当菜单项没有子菜单时，才给它添加RouterLink
         if (!hasChildren) {
             menuOption.label = () => h(
                 RouterLink,
@@ -60,21 +71,20 @@ const buildMenu = (routes: any[]): MenuOption[] => { // 如果有类型定义请
             );
         }
 
-        // 如果菜单项有子菜单，递归构建子菜单
         if (hasChildren) {
             menuOption.children = buildMenu(route.children);
         }
 
         return menuOption;
     });
-}
+};
 
 onMounted(() => {
-    const homeRoute = router.getRoutes().find(route => route.path === '/home')
+    const homeRoute = router.getRoutes().find(route => route.path === '/home');
     if (homeRoute?.children) {
-        menuOptions.value = buildMenu(homeRoute.children)
+        menuOptions.value = buildMenu(homeRoute.children);
     }
-})
+});
 </script>
 
 <style scoped></style>

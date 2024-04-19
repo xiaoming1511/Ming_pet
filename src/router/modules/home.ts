@@ -12,6 +12,7 @@ export default [
           hidden: true,
           title: "首页",
           roles: ["user", "admin"],
+          icon: "dashboard",
         },
         component: () => import("@/views/dashboard/index.vue"),
       },
@@ -22,6 +23,7 @@ export default [
           requiresAuth: true,
           roles: ["user", "admin"],
           title: "商品管理",
+          icon: "product",
         },
         children: [
           {
@@ -63,6 +65,7 @@ export default [
           requiresAuth: true,
           roles: ["user", "admin"],
           title: "订单管理",
+          icon: "order",
         },
         component: () => import("@/views/order/index.vue"),
       },
@@ -73,6 +76,7 @@ export default [
           requiresAuth: true,
           roles: ["user", "admin"],
           title: "宠物管理",
+          icon: "pet",
         },
         children: [
           {
@@ -105,13 +109,19 @@ export default [
           requiresAuth: true,
           roles: ["user", "admin"],
           title: "顾客管理",
+          icon: "vip",
         },
       },
       {
         path: "/home/workers",
         name: "Workers",
         component: () => import("@/views/workers/index.vue"),
-        meta: { requiresAuth: true, roles: ["admin"], title: "员工管理" },
+        meta: {
+          requiresAuth: true,
+          roles: ["admin"],
+          title: "员工管理",
+          icon: "workers",
+        },
       },
       {
         path: "/home/digital",
@@ -121,6 +131,7 @@ export default [
           requiresAuth: true,
           roles: ["user", "admin"],
           title: "数据中心",
+          icon: "digital",
         },
       },
     ],
