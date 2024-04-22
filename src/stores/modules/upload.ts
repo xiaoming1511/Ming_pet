@@ -5,9 +5,9 @@ export const useupLoadStore = defineStore("upload", {
   id: "upload",
   state: () => ({}),
   actions: {
-    async upLoadImage(data) { 
+    async upLoadImage(data) {
       const res = await uploadService.upLoadImage(data);
-      console.log(res);
+      return res.data;
     },
   },
 });

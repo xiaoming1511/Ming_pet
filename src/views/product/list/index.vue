@@ -177,7 +177,8 @@ const formModel = ref({
     stockQuantity: '',
     price: null,
     productImage: '',
-    category: null
+    category: null,
+    imageUrl: ''
 });
 
 // 获取分类id
@@ -215,6 +216,11 @@ const handleEdit = (row) => {
 }
 // 提交
 const handleSubmit = async () => {
+    if (publicStore.uploadImage) {
+        publicStore.itemList.imageUrl = publicStore.uploadImage;
+    }
+    console.log(publicStore.uploadImage);
+
     try {
         if (publicStore.isEditMode) {
             // 编辑操作
@@ -309,5 +315,9 @@ function mapProductWithCategory(product) {
 <style scoped lang="scss">
 :deep(.n-button) {
     margin: 0 7px 0;
+}
+:deep(.n-form-item-blank) {
+    flex-direction: column;
+    align-items: normal;
 }
 </style>

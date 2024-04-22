@@ -10,6 +10,7 @@ export const usePublicStore = defineStore("public", {
     isEditMode: false,
     currentItem: null,
     selectedRows: [],
+    uploadImage: null,
   }),
 
   getters: {},
