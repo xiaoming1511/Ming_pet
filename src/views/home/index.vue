@@ -3,7 +3,7 @@
         <transition name="slide">
             <div class="w-full h-full">
                 <Menu class="relative fixed-menu"></Menu>
-                <n-flex class="hmain w-full h-full" :style="mainStyle">
+                <n-flex class="hmain" :style="mainStyle">
                     <Navigator class="pos-absolute top-0 left-0 navigator" :style="navigatorStyle" />
                     <div class="router-view" :style="viewStyle">
                         <router-view class="bg-gray-100"></router-view>

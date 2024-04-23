@@ -17,8 +17,4 @@
   width: 100vw;
   height: 100vh;
 }
-
-:deep(.n-avatar) {
-  background-color: transparent;
-}
 </style>

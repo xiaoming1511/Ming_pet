@@ -17,7 +17,7 @@
             </template>
 
             <template #search-actions>
-                <n-button class="mr-4" text quaternary :focusable="false" @click="addProduct">
+                <n-button class="mr-4" quaternary :focusable="false" @click="addProduct">
                     <template #icon>
                         <n-icon>
                             <IconAdd></IconAdd>
@@ -56,7 +56,8 @@
                         <n-input v-model:value="publicStore.itemList.productDescription" placeholder="请输入商品描述" />
                     </n-form-item>
                     <n-form-item label="库存数量：" path="stockQuantity">
-                        <n-input v-model:value="publicStore.itemList.stockQuantity" placeholder="请输入商品数量" />
+                        <n-input v-model:value="publicStore.itemList.stockQuantity" placeholder="请输入商品数量"
+                            :show-button="false" />
                     </n-form-item>
                     <n-form-item label="商品价格：" path="price">
                         <n-input-number v-model:value="publicStore.itemList.price" :show-button="false">
@@ -315,9 +316,5 @@ function mapProductWithCategory(product) {
 <style scoped lang="scss">
 :deep(.n-button) {
     margin: 0 7px 0;
-}
-:deep(.n-form-item-blank) {
-    flex-direction: column;
-    align-items: normal;
 }
 </style>

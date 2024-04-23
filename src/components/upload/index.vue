@@ -2,7 +2,7 @@
     <div>
         <n-spin :show="show">
             <n-upload action="" :default-file-list="fileList" :custom-request="customRequest" list-type="image-card"
-                :on-success="handleSuccess" :on-error="handleError" :before-upload="beforeUpload" />
+                :before-upload="beforeUpload" max="1" />
         </n-spin>
     </div>
 </template>
@@ -17,26 +17,7 @@ const message = useMessage();
 const publicStore = usePublicStore()
 const upLoadStore = useupLoadStore()
 const show = ref(false)
-const fileList = ref([
-    {
-        id: publicStore.itemList.productId,
-        name: publicStore.itemList.productName,
-        status: 'finished',
-        url: publicStore.itemList.imageUrl
-    }
-])
-
-const handleSuccess = (response, file, fileList) => {
-    // 处理上传成功逻辑
-    message.success('上传成功');
-    console.log('上传成功', response, file, fileList);
-};
-
-const handleError = (error, file, fileList) => {
-    // 处理上传失败逻辑
-    message.error('上传失败');
-    console.error('上传失败', error, file, fileList);
-};
+const fileList = ref([])
 
 const beforeUpload = (file) => {
     // 检查文件格式和大小
@@ -58,17 +39,30 @@ const beforeUpload = (file) => {
 const customRequest = async ({ file, onProgress, onError, onSuccess }) => {
     const formData = new FormData();
     formData.append('img', file.file);
-    // show.value = true
+    show.value = true
     try {
         const response = await upLoadStore.upLoadImage(formData);
-        onSuccess(response, file);
+        message.success('上传成功');
         publicStore.uploadImage = response
     } catch (error) {
-        onError(error);
+        console.log(error);
     } finally {
-        // show.value = false; // 隐藏加载状态
+        show.value = false; // 隐藏加载状态
     }
 };
+
+onMounted(() => {
+    if (publicStore.isEditMode) {
+        fileList.value.push({
+            id: publicStore.itemList.productId.toString(),
+            name: publicStore.itemList.productName,
+            status: 'finished',
+            url: publicStore.itemList.imageUrl,
+        });
+    } else {
+        fileList.value = [];
+    }
+})
 </script>
 
 <style scoped></style>
