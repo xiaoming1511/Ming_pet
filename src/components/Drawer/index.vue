@@ -71,7 +71,7 @@ const selectedProducts = computed(() => {
 });
 const orderDate = ref({
     customerId: 0,
-    employeeId: 3,
+    employeeId: userStore.userInfo.id,
     orderItems: [], // 初始化为一个空数组
     status: '',
 });

@@ -1,7 +1,7 @@
 <template>
     <div>
         <Table :columns="columns" :data="data" :row-key="row => row.id"></Table>
-        <n-flex justify="end">
+        <n-flex justify="end" class="pt-4">
             <n-select class="w-64" @update:value="handleUpdateValue" filterable :options="petList"
                 :render-label="renderLabel" :render-tag="renderSingleSelectTag" placeholder="请选择宠物" />
         </n-flex>
