@@ -23,21 +23,33 @@
                                             <n-flex vertical>
                                                 <div class="flex items-center gap-4">
                                                     <span class="text-base">{{ item.petName }}</span>
-                                                    <n-icon size="17">
-                                                        <iconAdd></iconAdd>
+                                                    <n-icon size="17" v-if="item.gender === 'GG'">
+                                                        <iconNan></iconNan>
+                                                    </n-icon>
+                                                    <n-icon size="17" v-else>
+                                                        <iconNv></iconNv>
                                                     </n-icon>
                                                     <n-tag round :bordered="false">
-                                                        品种
+                                                        {{ item.breed }}
                                                         <template #icon>
-                                                            <n-icon>
-                                                                <iconAdd></iconAdd>
+                                                            <n-icon v-if="item.breed === 'cat'">
+                                                                <iconCat></iconCat>
+                                                            </n-icon>
+                                                            <n-icon v-else>
+                                                                <iconDog></iconDog>
                                                             </n-icon>
                                                         </template>
                                                     </n-tag>
                                                 </div>
                                                 <div>
-                                                    <span class="text-pink-900">
-                                                        距离生日还有{{ item.serviceDate }}天
+                                                    <span class="text-pink-900" v-if="item.daysUntilService > 0">
+                                                        距离预约时间还有{{ item.daysUntilService }}天
+                                                    </span>
+                                                    <span class="text-pink-900" v-if="item.daysUntilService < 0">
+                                                        距离预约时间已经过期了{{ Math.abs(item.daysUntilService) }}天
+                                                    </span>
+                                                    <span class="text-pink-900" v-if="item.daysUntilService === 0">
+                                                        今天刚好是它的生日
                                                     </span>
                                                 </div>
                                             </n-flex>
@@ -67,7 +79,7 @@
 
 <script setup lang="ts">
 import { usePetsStore } from '@/stores/modules/pets';
-import { format } from 'date-fns/esm';
+import { format, differenceInDays, parseISO } from 'date-fns/esm';
 
 const petStore = usePetsStore();
 const petsServiceListCount = computed(() => {

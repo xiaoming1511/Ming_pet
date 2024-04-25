@@ -16,7 +16,6 @@ import { usePetsStore } from '@/stores/modules/pets';
 const petStore = usePetsStore();
 const message = useMessage();
 
-
 const badge = ref(0);
 const value = ref(Date.now());
 const currentMonth = new Date();
