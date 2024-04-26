@@ -25,6 +25,9 @@ class ServicesService {
   addPetServices(ServicesDate) {
     return http.post("petServices/add", ServicesDate);
   }
+  deletePricing(pricingId) {
+    return http.delete(`pricing/delete/${pricingId}`);
+  }
 }
 
 export default new ServicesService();

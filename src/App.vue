@@ -3,13 +3,15 @@
 </script>
 
 <template>
-  <n-message-provider>
-    <n-modal-provider>
-      <n-dialog-provider>
-        <router-view></router-view>
-      </n-dialog-provider>
-    </n-modal-provider>
-  </n-message-provider>
+  <n-loading-bar-provider>
+    <n-message-provider>
+      <n-modal-provider>
+        <n-dialog-provider>
+          <router-view></router-view>
+        </n-dialog-provider>
+      </n-modal-provider>
+    </n-message-provider>
+  </n-loading-bar-provider>
 </template>
 
 <style scoped>

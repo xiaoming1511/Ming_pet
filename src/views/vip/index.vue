@@ -11,8 +11,7 @@
                 </n-input>
             </template>
             <template #search-actions>
-                <n-button class="mr-4" text quaternary :focusable="false"
-                    @click="publicStore.openAddModal(addItemList)">
+                <n-button class="mr-4" quaternary :focusable="false" @click="publicStore.openAddModal(addItemList)">
                     <template #icon>
                         <n-icon>
                             <IconAdd></IconAdd>
@@ -64,11 +63,12 @@
 <script setup lang="ts">
 import { usecustomersStore } from '@/stores/modules/customers';
 import { usePublicStore } from '@/stores/public';
-import { NButton } from "naive-ui"
+import { NButton, useMessage } from "naive-ui"
 
 const publicStore = usePublicStore()
 const customersStore = usecustomersStore();
 const showDialog = useDialog();
+const message = useMessage()
 
 const customersList = ref();
 const itemList = ref()
@@ -146,14 +146,17 @@ onMounted(async () => {
 })
 
 const handleClose = (row) => {
-    publicStore.openEditModal(row)
+    const { ...rest } = row;
+    publicStore.openEditModal(rest)
 }
 
 const handleSubmit = async (customersDate) => {
     if (publicStore.isEditMode) {
         await customersStore.upDateCustomersItem(customersDate.customerId, customersDate);
+        message.success("修改成功")
     } else {
         await customersStore.addCustomersItem(customersDate);
+        message.success("添加成功")
     }
     getAllCustomersList()
     publicStore.changeShowModal()
@@ -170,6 +173,7 @@ function showDeleteConfirm(row) {
 }
 const handleDeleteClick = async (id) => {
     await customersStore.deleteCustomersItem(id)
+    message.success("删除成功")
     getAllCustomersList()
 }
 const handleSearch = async () => {

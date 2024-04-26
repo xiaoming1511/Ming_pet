@@ -12,7 +12,7 @@
                     <n-input-group>
                         <n-flex justify="space-between" class="w-full h-full items-center p-x5">
                             <div class="header-title">服务内容</div>
-                            <n-button type="primary" @click="publicStore.openAddModal(addItem)">添加</n-button>
+                            <n-button type="primary" @click="addService">添加</n-button>
                         </n-flex>
                     </n-input-group>
 
@@ -65,8 +65,8 @@
             </template>
             <template #action>
                 <div>
-                    <n-button @click="publicStore.changeShowModal()">取消</n-button>
-                    <n-button type="primary" @click="handleSubmit()">提交</n-button>
+                    <n-button class="mx-1" @click="publicStore.changeShowModal()">取消</n-button>
+                    <n-button class="mx-1" type="primary" @click="handleSubmit()">提交</n-button>
                 </div>
             </template>
         </Modal>
@@ -77,6 +77,7 @@
 import { useServicesStore } from '@/stores/modules/services';
 import { usePublicStore } from '@/stores/public';
 import index from '@/views/home/index.vue';
+import { add } from 'lodash';
 
 const servicesStore = useServicesStore();
 const publicStore = usePublicStore();
@@ -159,6 +160,13 @@ function triggerChange(index) {
     }
 }
 
+const addService = () => {
+    const addForm = {
+        pricingName: '',
+    }
+    dynamicForm.hobbies = [];
+    publicStore.openAddModal(addForm)
+}
 
 const handleSubmit = async () => {
     try {
@@ -206,6 +214,7 @@ const handleSubmit = async () => {
             message.success('添加成功')
         }
         publicStore.changeShowModal()
+        loadData()
     } catch (error) {
         console.error('提交失败:', error);
     }
@@ -216,9 +225,15 @@ onMounted(async () => {
 });
 
 // 价目表开关
-const removeItem = (index: number) => {
-    // dynamicForm.hobbies.splice(index, 1)
-    console.log(itemInfo.value[index].pricingId);
+const removeItem = async (index: number) => {
+    // 获取并打印即将被删除的元素的pricingId
+    const removedItemId = dynamicForm.hobbies[index].pricingId;
+
+    // 从数组中删除指定索引的元素
+    dynamicForm.hobbies.splice(index, 1);
+
+    await servicesStore.deletePricing(removedItemId);
+    message.success("删除成功")
 }
 const addItem = () => {
     dynamicForm.hobbies.push({ pricingName: '', servicesId: publicStore.itemList.serviceId, originalPrice: null, memberPrice: null });
@@ -230,6 +245,7 @@ const deleteService = async (id) => {
         await servicesStore.deleteService(id);
         // 提示成功消息
         message.success('删除成功');
+        loadData()
     } catch (error) {
         message.error('删除失败');
     }

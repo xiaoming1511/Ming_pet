@@ -11,8 +11,7 @@
                 </n-input>
             </template>
             <template #search-actions>
-                <n-button class="mr-4" text quaternary :focusable="false"
-                    @click="publicStore.openAddModal(addItemList)">
+                <n-button class="mr-4" quaternary :focusable="false" @click="publicStore.openAddModal(addItemList)">
                     <template #icon>
                         <n-icon>
                             <IconAdd></IconAdd>
@@ -153,8 +152,8 @@ onMounted(async () => {
 })
 
 const handleEdit = (row) => {
-    publicStore.openEditModal(row)
-    console.log(publicStore.itemList);
+    const { ...rest } = row
+    publicStore.openEditModal(rest)
 }
 const handleSubmit = async (EmployeeDate) => {
     if (publicStore.isEditMode) {
@@ -178,6 +177,7 @@ const showDeleteConfirm = async (row) => {
 }
 const handleDeleteClick = async (id) => {
     await employeeStore.deleteEmployeeInfo(id)
+    message.success("删除成功")
     getAllEmployeeList()
 }
 const handleSearch = async () => {

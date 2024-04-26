@@ -56,6 +56,11 @@ export const usePetsStore = defineStore("pets", {
     },
     async addPet(petDate) {
       const request = await petService.addPet(petDate);
+      return request.data;
+    },
+    async deletePet(petId) {
+      const request = await petService.deleteByid(petId);
+      return request.data;
     },
     async updatePet(petId, petDate) {
       const request = await petService.updatePetsInfo(petId, petDate);

@@ -17,7 +17,7 @@
                     :options="breed" />
             </template>
             <template #search-actions>
-                <n-button class="mr-4" text quaternary :focusable="false" @click="addPet(fromDate)">
+                <n-button class="mr-4" quaternary :focusable="false" @click="addPet(fromDate)">
                     <template #icon>
                         <n-icon>
                             <IconAdd></IconAdd>
@@ -42,6 +42,10 @@
             </template>
             <template #form-content>
                 <div>
+                    <n-form-item label="宠物头像：" path="inputValue">
+                        <Upload :id="publicStore.itemList.id" :name="publicStore.itemList.petName"
+                            :url="publicStore.itemList.avatar"></Upload>
+                    </n-form-item>
                     <n-form-item label="宠物名称：" path="petName">
                         <n-input v-model:value="publicStore.itemList.petName" placeholder="请输入宠物名称" />
                     </n-form-item>
@@ -59,7 +63,8 @@
                         <n-date-picker v-model:value="timestamp" type="date" />
                     </n-form-item>
                     <n-form-item label="体重：" path="weight">
-                        <n-input v-model:value="publicStore.itemList.weight" placeholder="请输入体重" />
+                        <n-input-number :show-button="false" v-model:value="publicStore.itemList.weight"
+                            placeholder="请输入体重" />
                     </n-form-item>
                     <n-form-item label="主人：" path="ownerId">
                         <n-select v-model:value="publicStore.itemList.ownerId" :options="OwnerList"
@@ -74,7 +79,8 @@
                             placeholder="请选择分类" />
                     </n-form-item>
                     <n-form-item label="价格：" path="produpricectName">
-                        <n-input v-model:value="publicStore.itemList.price" placeholder="请输入价格" />
+                        <n-input-number :show-button="false" v-model:value="publicStore.itemList.price"
+                            placeholder="请输入价格" />
                     </n-form-item>
                 </div>
             </template>
@@ -90,11 +96,12 @@
 
 <script setup lang="ts">
 import { usePetsStore } from '@/stores/modules/pets';
-import { NButton } from 'naive-ui';
+import { NButton, NAvatar, useMessage } from 'naive-ui';
 import { usePublicStore } from '@/stores/public';
 import { usecustomersStore } from '@/stores/modules/customers';
 import { DateUtils } from '@/utils/dateUtils';
 
+const message = useMessage()
 const publicStore = usePublicStore();
 const PetsStore = usePetsStore();
 const customersStore = usecustomersStore();
@@ -104,6 +111,7 @@ const searchKeyword = ref('')
 const selectedValue = ref(null)
 const PetsList = ref([])
 const itemList = ref([])
+const OwnerList = ref([])
 const timestamp = ref()
 const songs = ref([
     {
@@ -159,9 +167,9 @@ const fromDate = ref({
     ownerId: null,
     price: null,
     saleStatus: null,
-    weight: null
+    weight: null,
+    avatar: ''
 })
-const OwnerList = ref([])
 
 const columns = ref([
     {
@@ -171,6 +179,16 @@ const columns = ref([
     {
         title: '宠物名称',
         key: 'petName'
+    },
+    {
+        title: '头像',
+        key: 'avatar',
+        render(row) {
+            return h(NAvatar, {
+                size: 'medium',
+                src: row.avatar,
+            });
+        }
     },
     {
         title: '种类',
@@ -251,17 +269,17 @@ function showDeleteConfirm(row) {
 }
 
 function handleEdit(row) {
-    publicStore.openEditModal(row)
-    timestamp.value = changeTime(row.birthday);
+    const { ...rest } = row
+    publicStore.openEditModal(rest)
+    timestamp.value = changeTime(rest.birthday);
 }
 
 async function handleDelete(Id) {
-    console.log('Confirmed delete', Id);
+    await PetsStore.deletePet(Id)
+    message.success('删除成功')
+    getAllPets()
 }
 
-function changeStatus(row, newVal) {
-    console.log(`Product ID: ${row} New Status: ${newVal}`);
-}
 const changeTime = (date) => {
     return Date.parse(date);
 }
@@ -272,14 +290,16 @@ const addPet = (fromDate) => {
 const handleSubmit = async () => {
     const { id, createdAt, deleted, isDeleted, updatedAt, ...item } = publicStore.itemList;
     fromDate.value = item
+    fromDate.value.avatar = publicStore.uploadImage
 
     if (publicStore.isEditMode) {
         await PetsStore.updatePet(id, fromDate.value)
+        message.success("修改成功")
     } else {
         fromDate.value.birthday = DateUtils.formatDate(timestamp.value)
         fromDate.value.age = DateUtils.calculateAge(fromDate.value.birthday)
-
         await PetsStore.addPet(fromDate.value)
+        message.success("添加成功")
     }
     getAllPets()
     publicStore.changeShowModal()

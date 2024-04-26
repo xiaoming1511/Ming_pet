@@ -55,18 +55,20 @@ http.interceptors.response.use(
     return response.data;
   },
   (error: any) => {
+    console.log("error", error);
+
     // 如果响应状态码是401，进行相应处理，比如跳转到登录页
-    if (error.response?.status === 401) {
-      // 可能需要清除本地存储的状态
-      localStorage.clear();
-      ElMessage.error("登录已过期，请重新登录");
-      // 如果你使用Vue Router可以如此跳转
-      router.push("/login");
-    } else {
-      // 对于其他类型的响应错误，显示错误消息
-      ElMessage.error(error.message);
-    }
-    return Promise.reject(error);
+    // if (error.response?.status === 401) {
+    //   // 可能需要清除本地存储的状态
+    //   localStorage.clear();
+    //   ElMessage.error("登录已过期，请重新登录");
+    //   // 如果你使用Vue Router可以如此跳转
+    //   router.push("/login");
+    // } else {
+    //   // 对于其他类型的响应错误，显示错误消息
+    //   ElMessage.error(error.message);
+    // }
+    // return Promise.reject(error);
   }
 );
 

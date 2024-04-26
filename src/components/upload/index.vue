@@ -2,7 +2,7 @@
     <div>
         <n-spin :show="show">
             <n-upload action="" :default-file-list="fileList" :custom-request="customRequest" list-type="image-card"
-                :before-upload="beforeUpload" max="1" />
+                :before-upload="beforeUpload" :max="1" />
         </n-spin>
     </div>
 </template>
@@ -51,13 +51,19 @@ const customRequest = async ({ file, onProgress, onError, onSuccess }) => {
     }
 };
 
+const props = defineProps({
+    id: Number,
+    name: String,
+    url: String
+});
+
 onMounted(() => {
     if (publicStore.isEditMode) {
         fileList.value.push({
-            id: publicStore.itemList.productId.toString(),
-            name: publicStore.itemList.productName,
+            id: props.id,
+            name: props.name,
             status: 'finished',
-            url: publicStore.itemList.imageUrl,
+            url: props.url,
         });
     } else {
         fileList.value = [];

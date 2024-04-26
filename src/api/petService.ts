@@ -31,6 +31,9 @@ class petsService {
       params: { category },
     });
   }
+  deleteByid(petId) {
+    return http.delete(`/pets/delete/${petId}`);
+  }
 }
 
 export default new petsService();

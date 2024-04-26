@@ -43,7 +43,8 @@
             <template #form-content>
                 <div>
                     <n-form-item label="商品图片：" path="inputValue">
-                        <Upload></Upload>
+                        <Upload :id="publicStore.itemList.productId" :name="publicStore.itemList.productName"
+                            :url="publicStore.itemList.avatar"></Upload>
                     </n-form-item>
                     <n-form-item label="商品名称：" path="productName">
                         <n-input v-model:value="publicStore.itemList.productName" placeholder="请输入商品名称" />
@@ -220,7 +221,6 @@ const handleSubmit = async () => {
     if (publicStore.uploadImage) {
         publicStore.itemList.imageUrl = publicStore.uploadImage;
     }
-    console.log(publicStore.uploadImage);
 
     try {
         if (publicStore.isEditMode) {
@@ -252,6 +252,7 @@ async function changeStatus(row, newVal) {
     const updatedData = { ...row, status: statusValue };
     try {
         await productStore.updateProductItem(productId, updatedData);
+        message.success("修改商品状态成功");
     } catch (error) {
         console.error("Failed to update product status:", error);
     }
@@ -260,10 +261,10 @@ async function changeStatus(row, newVal) {
 // 删除
 function showDeleteConfirm(row) {
     showDialog.warning({
-        title: 'Confirm Delete',
-        content: 'Are you sure you want to delete this product?',
-        positiveText: 'Confirm',
-        negativeText: 'Cancel',
+        title: '确认删除?',
+        content: '您确定要删除此产品吗？',
+        positiveText: '确定',
+        negativeText: '取消',
         onPositiveClick: () => handleDeleteClick(row.productId)
     });
 }

@@ -112,5 +112,9 @@ export const useServicesStore = defineStore("services", {
       // 将日期更新为选定的宠物
       this.petDates[petId] = date;
     },
+    async deletePricing(pricingId) {
+      const request = await servicesService.deletePricing(pricingId);
+      return request.data;
+    },
   },
 });
