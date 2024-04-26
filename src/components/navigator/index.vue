@@ -39,7 +39,7 @@ const message = useMessage()
 const userStore = useUserStore()
 const sidebarStore = useSidebarStore();
 
-const iconNames = ['Search', 'Xinxi', 'Qianbao'];
+const iconNames = ['Search', 'Xinxi', 'Cart'];
 const Icons = computed(() => iconNames.map(name => `Icon${name}`));
 
 const handleSelect = async (item) => {
@@ -78,17 +78,21 @@ const options = [
 ]
 
 // 定义不同的图标按钮点击方法
-const onSearchClick = () => console.log('搜索被点击');
-const onMessageClick = () => console.log('信息被点击');
+const onSearchClick = () => {
+    message.warning('搜索功能暂未开放');
+}
+const onMessageClick = () => {
+    message.warning('消息功能暂未开放');
+}
 const onWalletClick = async () => {
     sidebarStore.changeActive()
 }
 
 // 将图标名称映射到对应的点击方法
 const iconClickMethods = {
-    IconSousuo: onSearchClick,
+    IconSearch: onSearchClick,
     IconXinxi: onMessageClick,
-    IconQianbao: onWalletClick,
+    IconCart: onWalletClick,
 };
 
 // 处理图标按钮点击事件的方法
