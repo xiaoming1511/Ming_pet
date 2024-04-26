@@ -44,7 +44,7 @@
                 <div>
                     <n-form-item label="商品图片：" path="inputValue">
                         <Upload :id="publicStore.itemList.productId" :name="publicStore.itemList.productName"
-                            :url="publicStore.itemList.avatar"></Upload>
+                            :url="publicStore.itemList.imageUrl"></Upload>
                     </n-form-item>
                     <n-form-item label="商品名称：" path="productName">
                         <n-input v-model:value="publicStore.itemList.productName" placeholder="请输入商品名称" />
@@ -288,14 +288,17 @@ const handleSearch = async () => {
             productList.value = productStore.products.filter(product =>
                 product.productName.includes(searchKeyword.value)
             ).map(mapProductWithCategory);
+            console.log(productList.value);
         } else if (searchKeyword.value) {
             // 仅存在搜索关键词
             await productStore.getProductsByName(searchKeyword.value);
             productList.value = productStore.products.map(mapProductWithCategory);
+            console.log(productList.value);
         } else if (selectedValue.value) {
             // 仅存在选定的分类
             await productStore.getProductsByCategory(selectedValue.value);
             productList.value = productStore.products.map(mapProductWithCategory);
+            console.log(productList.value);
         } else {
             // 如果没有任何筛选条件，获取所有产品
             await productStore.fetchProductList();
@@ -305,11 +308,12 @@ const handleSearch = async () => {
     }
 }
 function mapProductWithCategory(product) {
-    const category = categoryOptions.value.find(option => option.value === product.category);
+    const category = categoryOptions.value.find(option => option.value == product.category);
+    
     return {
         ...product,
         status: product.status === '1', // 状态转换
-        categoryName: category ? category.label : product.categoryName, // 分类名称转换
+        categoryName: category ? category.label : product.categoryName, 
     };
 }
 </script>

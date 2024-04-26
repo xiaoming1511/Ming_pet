@@ -96,10 +96,12 @@
 
 <script setup lang="ts">
 import { usePetsStore } from '@/stores/modules/pets';
-import { NButton, NAvatar, useMessage } from 'naive-ui';
+import { NButton, NAvatar, useMessage, NIcon } from 'naive-ui';
 import { usePublicStore } from '@/stores/public';
 import { usecustomersStore } from '@/stores/modules/customers';
 import { DateUtils } from '@/utils/dateUtils';
+import NanIcon from "@/assets/icons/nan.svg?component";
+import NvIcon from "@/assets/icons/nv.svg?component";
 
 const message = useMessage()
 const publicStore = usePublicStore();
@@ -196,7 +198,13 @@ const columns = ref([
     },
     {
         title: '性别',
-        key: 'gender'
+        key: 'gender',
+        render(row) {
+            const IconComponent = row.gender === 'GG' ? NanIcon : NvIcon; // 根据性别选择图标
+            return h(NIcon, null, {
+                default: () => h(IconComponent)
+            });
+        }
     },
     {
         title: '年龄',
