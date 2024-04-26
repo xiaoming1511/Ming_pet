@@ -14,9 +14,12 @@
   </n-loading-bar-provider>
 </template>
 
-<style scoped>
+<style>
 #APP {
   width: 100vw;
   height: 100vh;
+}
+#nprogress .bar {
+  background: rgba(24, 160, 88, 1) !important;
 }
 </style>

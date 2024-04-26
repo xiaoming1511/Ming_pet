@@ -108,14 +108,12 @@ import { useUserStore } from '@/stores/modules/user';
 import { useRouter, useRoute } from 'vue-router';
 import { resetAuthRouter } from '@/router';
 import { use } from 'echarts';
-import { useLoadingBar } from 'naive-ui';
 
 const userStore = useUserStore();
 const { locale } = useI18n()
 const message = useMessage();
 const router = useRouter();
 const route = useRoute()
-const loadingBar = useLoadingBar();
 
 const topic = ref(true)
 const switchShow = ref(true);
@@ -173,41 +171,34 @@ const changeLang = (lang: string) => {
 }
 
 const login = async () => {
-    loadingBar.start();
     try {
         await userStore.login({ username: LoginformValue.username, password: LoginformValue.password });
         resetAuthRouter()
         // 登录成功后的逻辑，比如跳转到主页
-        loadingBar.finish(); // 完成加载条
         const redirect = route.query.redirect || '/home/dashboard'
         router.push(redirect)
     } catch (error) {
-        loadingBar.error(); // 出现错误时显示错误状态
         console.log(error);
     }
 }
 
 const handleSignUp = async () => {
-    loadingBar.start();
     const { reenteredPassword, ...data } = signUpFormValue.value;
     SignUpformRef.value?.validate(async (errors) => {
         if (!errors) {
             try {
                 // 调用注册方法
                 await userStore.register({ ...data, nickName: data.nickname });
-                loadingBar.finish(); // 完成加载条
                 changeForm()
                 Object.keys(signUpFormValue.value).forEach(key => {
                     signUpFormValue.value[key] = '';
                 });
                 message.success('注册成功');
             } catch (error) {
-                loadingBar.error(); 
                 console.error('注册失败:', error);
                 message.error('注册过程中发生错误');
             }
         } else {
-            loadingBar.error(); 
             console.log(errors)
             message.error('验证失败')
         }
