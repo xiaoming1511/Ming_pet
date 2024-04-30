@@ -26,19 +26,19 @@
                             v-show="!switchShow" label-placement="left" label-width="auto" show-require-mark
                             require-mark-placement="left" :rules="sginUpRules">
                             <h2 class="form_title title">创建账号</h2>
-                            <n-form-item path="username" label="用户名">
+                            <n-form-item path="username" >
                                 <n-input v-model:value="signUpFormValue.username" class="form_input"
                                     placeholder="请输入用户名" @keydown.enter.prevent />
                             </n-form-item>
-                            <n-form-item path="nickname" label="昵称">
+                            <n-form-item path="nickname" >
                                 <n-input v-model:value="signUpFormValue.nickname" class="form_input" type="name"
                                     placeholder="请输入昵称" @keydown.enter.prevent />
                             </n-form-item>
-                            <n-form-item path="password" label="密码">
+                            <n-form-item path="password" >
                                 <n-input v-model:value="signUpFormValue.password" class="form_input" type="password"
                                     placeholder="请输入密码" @keydown.enter.prevent />
                             </n-form-item>
-                            <n-form-item path="reenteredPassword" label="确认密码">
+                            <n-form-item path="reenteredPassword">
                                 <n-input v-model:value="signUpFormValue.reenteredPassword" class="form_input"
                                     type="password" placeholder="请再次输入密码" @keydown.enter.prevent />
                             </n-form-item>
@@ -50,7 +50,7 @@
                                 </n-radio-group>
                             </n-form-item>
 
-                            <n-button class="form_button button submit" type="success" @click="handleSignUp">
+                            <n-button class="form_button button submit" type="success" @click="signUp">
                                 SIGN UP
                             </n-button>
                         </n-form>
@@ -103,11 +103,33 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import GlobalizationIcon from "@/assets/icons/globalization.svg?component";
-import type { FormRules } from 'element-plus'
 import { useUserStore } from '@/stores/modules/user';
 import { useRouter, useRoute } from 'vue-router';
 import { resetAuthRouter } from '@/router';
 import { use } from 'echarts';
+
+// 数据结构定义
+interface UserInfo {
+    username: string;
+    password: string;
+}
+
+interface SignUpInfo extends UserInfo {
+    nickname: string;
+    reenteredPassword: string;
+    role: string;
+}
+
+// Enums 用于定义角色和性别
+enum UserRole {
+    Admin = "1",
+    User = "2",
+}
+
+enum UserGender {
+    Male = "男",
+    Female = "女",
+}
 
 const userStore = useUserStore();
 const { locale } = useI18n()
@@ -115,8 +137,8 @@ const message = useMessage();
 const router = useRouter();
 const route = useRoute()
 
-const topic = ref(true)
-const switchShow = ref(true);
+const topic = ref<boolean>(true)
+const switchShow = ref<boolean>(true);
 const switchCtn = ref<HTMLElement | null>(null);
 const switchC1 = ref<HTMLElement | null>(null);
 const switchC2 = ref<HTMLElement | null>(null);
@@ -125,44 +147,44 @@ const aContainer = ref<HTMLElement | null>(null);
 const bContainer = ref<HTMLElement | null>(null);
 const LoginformRef = ref<FormInst | null>(null);
 const SignUpformRef = ref<FormInst | null>(null);
-const roles = [
+
+// 使用枚举来设置角色选项
+const roles = reactive([
     {
-        value: "1",
-        label: "Admin"
+        value: UserRole.Admin,
+        label: "Admin",
     },
     {
-        value: '2',
-        label: 'User'
-    }
-]
-const sex = [
+        value: UserRole.User,
+        label: 'User',
+    },
+]);
+
+// 使用枚举来设置性别选项
+const sex = reactive([
     {
-        value: "男",
-        label: "男"
+        value: UserGender.Male,
+        label: "男",
     },
     {
-        value: '女',
-        label: '女'
-    }
-]
-const LoginformValue = reactive<userInfo>({
+        value: UserGender.Female,
+        label: '女',
+    },
+]);
+
+// 使用接口来reactive
+const LoginformValue = reactive<UserInfo>({
     username: '',
     password: '',
-})
-const signUpFormValue = ref<FormInst | null>(
-    {
-        username: '',
-        nickname: '',
-        password: '',
-        reenteredPassword: '',
-        role: '',
-    }
-)
+});
 
-interface userInfo {
-    username: string
-    password: string
-}
+const signUpFormValue = ref<SignUpInfo>({
+    username: '',
+    nickname: '',
+    password: '',
+    reenteredPassword: '',
+    role: '',
+});
 
 // 更改语言
 const changeLang = (lang: string) => {
@@ -175,14 +197,14 @@ const login = async () => {
         await userStore.login({ username: LoginformValue.username, password: LoginformValue.password });
         resetAuthRouter()
         // 登录成功后的逻辑，比如跳转到主页
-        const redirect = route.query.redirect || '/home/dashboard'
+        const redirect = (route.query.redirect as string) || '/home/dashboard'
         router.push(redirect)
     } catch (error) {
         console.log(error);
     }
 }
 
-const handleSignUp = async () => {
+const signUp = async (signUpInfo: SignUpInfo) => {
     const { reenteredPassword, ...data } = signUpFormValue.value;
     SignUpformRef.value?.validate(async (errors) => {
         if (!errors) {
@@ -213,7 +235,6 @@ onMounted(() => {
     aContainer.value = document.querySelector("#a-container");
     bContainer.value = document.querySelector("#b-container");
 });
-
 
 const changeForm = () => {
     // 切换动画相关的类
@@ -357,13 +378,6 @@ const sginUpRules = reactive<FormRules>({
     margin-bottom: 20px;
 }
 
-:deep(.n-input__input-el) {
-    height: 100%;
-}
-
-:deep(.n-input-wrapper) {
-    padding: 0 1.25rem;
-}
 
 :deep(.n-form-item-label) {
     height: 40px !important;

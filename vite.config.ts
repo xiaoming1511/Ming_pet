@@ -23,7 +23,7 @@ export default defineConfig({
     port: 7778,
     proxy: {
       "/api": {
-        target: "http://localhost:7777", // 后端服务地址
+        target: "http://47.113.225.63:7777", // 后端服务地址
         changeOrigin: true, // 是否改变源地址
         rewrite: (path) => path.replace(/^\/api/, ""), // 重写路径：移除/api
       },

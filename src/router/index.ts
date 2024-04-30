@@ -22,7 +22,6 @@ export const routes: Array<RouteRecordRawT> = [
   ...basicRoutes,
   ...routerModuleList,
 ];
-// console.error(routes);
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
