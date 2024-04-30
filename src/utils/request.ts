@@ -20,7 +20,7 @@ enum RequestEnums {
 }
 
 const http = axios.create({
-  baseURL: "http://localhost:7777",
+  baseURL: "/api",
   timeout: 50000,
 });
 

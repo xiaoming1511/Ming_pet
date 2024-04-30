@@ -18,7 +18,17 @@ import svgLoader from "vite-svg-loader";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  server:{ host: '127.0.0.1', port: 3000 },
+  server: {
+    host: "127.0.0.1",
+    port: 7778,
+    proxy: {
+      "/api": {
+        target: "http://localhost:7777", // 后端服务地址
+        changeOrigin: true, // 是否改变源地址
+        rewrite: (path) => path.replace(/^\/api/, ""), // 重写路径：移除/api
+      },
+    },
+  },
   plugins: [
     vue(),
     UnoCSS({
@@ -50,7 +60,6 @@ export default defineConfig({
         NaiveUiResolver(),
         IconsResolver({
           prefix: "Icon",
-
         }),
       ],
       dts: path.resolve("src", "types", "components.d.ts"),

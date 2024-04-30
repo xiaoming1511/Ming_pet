@@ -64,15 +64,14 @@
 import { useemployeeStore } from '@/stores/modules/employee';
 import { usePublicStore } from '@/stores/public';
 import { NButton, useDialog } from "naive-ui"
+import { Store } from "pinia"
 
-const publicStore = usePublicStore()
+const publicStore: Store<typeof publicStore> = usePublicStore()
 const employeeStore = useemployeeStore();
 const showDialog = useDialog();
 const message = useMessage();
-
 const employeeList = ref([]);
 const searchKeyword = ref('')
-const itemList = ref()
 const addItemList = ref(
     {
         employeeEmail: "",
@@ -119,7 +118,7 @@ const columns = ref([
     {
         title: '操作',
         key: 'actions',
-        render(row) {
+        render(row: any) {
             return [
                 h(
                     NButton,
@@ -151,11 +150,11 @@ onMounted(async () => {
     getAllEmployeeList()
 })
 
-const handleEdit = (row) => {
+const handleEdit = (row: any) => {
     const { ...rest } = row
     publicStore.openEditModal(rest)
 }
-const handleSubmit = async (EmployeeDate) => {
+const handleSubmit = async (EmployeeDate: any) => {
     if (publicStore.isEditMode) {
         await employeeStore.updateEmployeeInfo(EmployeeDate.employeeId, EmployeeDate)
         message.success("保存成功")
@@ -166,7 +165,7 @@ const handleSubmit = async (EmployeeDate) => {
     getAllEmployeeList()
     publicStore.changeShowModal()
 }
-const showDeleteConfirm = async (row) => {
+const showDeleteConfirm = async (row: any) => {
     showDialog.warning({
         title: 'Confirm Delete',
         content: 'Are you sure you want to delete this product?',
@@ -175,7 +174,7 @@ const showDeleteConfirm = async (row) => {
         onPositiveClick: () => handleDeleteClick(row.employeeId)
     });
 }
-const handleDeleteClick = async (id) => {
+const handleDeleteClick = async (id: number) => {
     await employeeStore.deleteEmployeeInfo(id)
     message.success("删除成功")
     getAllEmployeeList()

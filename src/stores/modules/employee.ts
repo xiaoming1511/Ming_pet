@@ -30,8 +30,12 @@ export const useemployeeStore = defineStore("employee", {
       const request = await employeeService.deleteEmployee(id);
     },
     async getBySearch(search) {
-      const request = await employeeService.getBySearch(search);
-      this.employee = request.data;
+      try {
+        const response = await employeeService.getBySearch(search);
+        this.employees = response.data;
+      } catch (error) {
+        console.error("Failed to fetch employees:", error);
+      }
     },
   },
 });
