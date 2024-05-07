@@ -23,7 +23,8 @@ export default defineConfig({
     port: 7778,
     proxy: {
       "/api": {
-        target: "http://47.113.225.63:7777", // 后端服务地址
+        // target: "http://47.113.225.63:7777", // 后端服务地址
+        target: "http://127.0.0.1:7777", // 后端服务地址
         changeOrigin: true, // 是否改变源地址
         rewrite: (path) => path.replace(/^\/api/, ""), // 重写路径：移除/api
       },
@@ -78,7 +79,7 @@ export default defineConfig({
   resolve: {
     // 设置文件./src路径为 @
     alias: {
-      "@": path.resolve(__dirname, "src"), // 使用 path.resolve 来设置别名
+      "@": path.resolve(__dirname, "src"),
       "vue-i18n": "vue-i18n/dist/vue-i18n.cjs.js",
     },
   },

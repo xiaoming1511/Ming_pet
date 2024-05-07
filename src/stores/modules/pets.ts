@@ -84,5 +84,38 @@ export const usePetsStore = defineStore("pets", {
       const request = await petService.getPetByCategory(category);
       this.pets = request.data;
     },
+    async getPetsByFilters(filters: any) {
+      try {
+        // 检查是否同时存在日期范围和关键字或分类的组合查询
+        if (filters.dateRange && (filters.keyword || filters.category)) {
+          // 如果是组合查询，这里你需要一个支持多重过滤条件的API端点
+          const { data } = await petService.getPetsByFilters(filters);
+          this.pets = data;
+        } else {
+          // 单独的日期范围查询
+          if (filters.dateRange) {
+            const { data } = await petService.getPetByDateRange(
+              filters.dateRange.startDate,
+              filters.dateRange.endDate
+            );
+            this.pets = data;
+          }
+          // 单独的关键字查询
+          if (filters.keyword) {
+            const { data } = await petService.getPetByKeyword(filters.keyword);
+            this.pets = data;
+          }
+          // 单独的分类查询
+          if (filters.category) {
+            const { data } = await petService.getPetByCategory(
+              filters.category
+            );
+            this.pets = data;
+          }
+        }
+      } catch (error) {
+        console.error("通过过滤器获取宠物失败:", error);
+      }
+    },
   },
 });

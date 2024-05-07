@@ -41,7 +41,7 @@ export default [
             name: "Record",
             meta: {
               requiresAuth: true,
-              roles: ["user", "admin"],
+              roles: ["admin"],
               title: "商品记录",
             },
             component: () => import("@/views/product/record/index.vue"),
@@ -135,5 +135,13 @@ export default [
         },
       },
     ],
+  },
+  {
+    path: "/setting",
+    name: "setting",
+    component: () => import("@/views/setting/index.vue"),
+    meta: {
+      hidden: true,
+    },
   },
 ];

@@ -34,6 +34,23 @@ class petsService {
   deleteByid(petId) {
     return http.delete(`/pets/delete/${petId}`);
   }
+  getPetsByFilters(filters) {
+    const params = new URLSearchParams();
+
+    // 构建查询参数
+    if (filters.dateRange) {
+      params.append("startDate", filters.dateRange.startDate);
+      params.append("endDate", filters.dateRange.endDate);
+    }
+    if (filters.keyword) {
+      params.append("keyword", filters.keyword);
+    }
+    if (filters.category) {
+      params.append("category", filters.category);
+    }
+
+    return http.get("/pets/byFilters", { params });
+  }
 }
 
 export default new petsService();

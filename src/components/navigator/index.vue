@@ -16,7 +16,16 @@
             <n-button quaternary circle v-for="(item, index) in Icons" :focusable="false"
                 @click="handleIconClick(item)">
                 <template #icon>
-                    <component :is="item" />
+                    <!-- 使用 v-if 来判断是否为第二个图标（index为1） -->
+                    <template v-if="index === 1">
+                        <n-badge :value="10" :max="9">
+                            <component :is="item" />
+                        </n-badge>
+                    </template>
+                    <!-- 如果不是第二个图标，或者是其他图标，直接渲染图标组件 -->
+                    <template v-else>
+                        <component :is="item" />
+                    </template>
                 </template>
             </n-button>
             <n-dropdown :options="options" @select="handleSelect">
@@ -33,9 +42,11 @@ import { useSidebarStore } from '@/stores/modules/sidebar';
 import { useUserStore } from '@/stores/modules/user';
 import { usePublicStore } from '@/stores/public';
 import { useRouter } from 'vue-router';
+import { NButton, NAvatar } from 'naive-ui'
 
 const router = useRouter()
 const message = useMessage()
+const notification = useNotification()
 const userStore = useUserStore()
 const sidebarStore = useSidebarStore();
 
@@ -65,11 +76,7 @@ const handleSelect = async (item) => {
 const options = [
     {
         label: '用户资料',
-        key: 'profile',
-    },
-    {
-        label: '编辑用户资料',
-        key: 'editProfile',
+        key: 'userProfile',
     },
     {
         label: '退出登录',
@@ -82,7 +89,28 @@ const onSearchClick = () => {
     message.warning('搜索功能暂未开放');
 }
 const onMessageClick = () => {
-    message.warning('消息功能暂未开放');
+    let markAsRead = false
+    const n = notification.create({
+        title: '这是一条消息',
+        content: `这是文本信息`,
+        meta: '2024年5月7日 09:00',
+        action: () =>
+            h(
+                NButton,
+                {
+                    text: true,
+                    type: 'primary', 
+                    onClick: () => {
+                        markAsRead = true
+                        n.destroy()
+                    }
+                },
+                {
+                    default: () => '已读'
+                }
+            )
+    })
+    // message.warning('消息功能暂未开放');
 }
 const onWalletClick = async () => {
     sidebarStore.changeActive()
@@ -109,8 +137,8 @@ const handleIconClick = (iconName: string) => {
 <style lang="scss" scoped>
 .n-icon-slot {
     svg {
-        width: 100%;
-        height: 100%;
+        width: 24px;
+        height: 24px;
     }
 }
 

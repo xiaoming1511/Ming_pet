@@ -330,17 +330,32 @@ const handleSelectRange = (v) => {
     }
 }
 const handleSearch = async () => {
+    const filters = {};
+
+    // 日期范围查询
     if (Array.isArray(selectedRange.value) && selectedRange.value.length === 2) {
-        // 用户选择了日期范围
         const [startDate, endDate] = selectedRange.value;
-        await PetsStore.getPetByDateRange(startDate, endDate);
-    } else if (searchKeyword.value.trim()) {
-        // 用户提供了关键词
-        await PetsStore.getPetByKeyword(searchKeyword.value.trim());
-    } else if (selectedValue.value) {
-        await PetsStore.getPetByCategory(selectedValue.value);
+        filters.dateRange = { startDate, endDate };
+    }
+
+    // 关键词查询
+    if (searchKeyword.value.trim()) {
+        filters.keyword = searchKeyword.value.trim();
+    }
+
+    // 分类查询
+    if (selectedValue.value) {
+        filters.category = selectedValue.value;
+    }
+
+    // 检查是否所有查询条件都为空
+    const isAllFiltersEmpty = !filters.dateRange && !filters.keyword && !filters.category;
+
+    // 如果所有查询条件都为空，则查询所有宠物；否则，根据过滤条件查询
+    if (isAllFiltersEmpty) {
+        await PetsStore.fetchPets(); // 没有过滤条件，查询所有宠物
     } else {
-        await getAllPets()
+        await PetsStore.getPetsByFilters(filters); // 使用过滤条件查询
     }
 
     PetsList.value = PetsStore.pets
