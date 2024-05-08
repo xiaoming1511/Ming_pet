@@ -2,8 +2,8 @@
     <div class="w-screen h-screen">
         <n-layout has-sider class="h-screen">
             <n-layout-sider>
-                <el-menu default-active="2" class="el-menu-vertical-demo">
-                    <el-menu-item index="1">
+                <el-menu default-active="2" class="el-menu-vertical-demo h-full">
+                    <el-menu-item index="1" @click="geHome">
                         <template #title>
                             <el-icon>
                                 <ArrowLeft />
@@ -12,7 +12,7 @@
                         </template>
                     </el-menu-item>
                     <div class="py-7">
-                        <el-avatar src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg" />
+                        <el-avatar :src="userStore.userInfo.avatar" />
                         <span> {{ userStore.userInfo.nickName }} </span>
                     </div>
                     <el-menu-item index="2">
@@ -47,6 +47,7 @@
 import { useUserStore } from '@/stores/modules/user';
 import userInfo from './userInfo/index.vue'
 import systemSetting from './systemSettings/index.vue'
+import { useRouter } from 'vue-router';
 import {
     Document,
     Menu as IconMenu,
@@ -55,11 +56,16 @@ import {
 } from '@element-plus/icons-vue'
 
 const userStore = useUserStore()
+const router = useRouter();
 const currentComponent = shallowRef(userInfo);
 
 const switchComponent = (componentName: string) => {
     currentComponent.value = componentName;
 };
+
+const geHome = () => {
+    router.push('/home');
+}
 </script>
 
 <style scoped lang="scss">

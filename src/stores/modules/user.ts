@@ -3,6 +3,7 @@ import store from "../index";
 import { Nullable } from "element-plus/es/components/cascader-panel/src/node";
 import loginService from "@/api/loginService";
 import { LogOut } from "@vicons/ionicons5";
+import { update } from "lodash";
 
 type UserInfo = {
   roleName: string;
@@ -68,6 +69,14 @@ export const useUserStore = defineStore({
       } catch (error) {
         ElMessage.error("注册请求失败");
         console.error("注册请求失败:", error);
+      }
+    },
+    async updateUserInfo(id, data) {
+      try {
+        return await loginService.updatedUserInfo(id, data);
+      } catch (error) {
+        ElMessage.error("修改请求失败");
+        console.error("修改请求失败:", error);
       }
     },
   },

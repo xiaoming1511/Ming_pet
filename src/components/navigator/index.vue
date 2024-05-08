@@ -55,13 +55,8 @@ const Icons = computed(() => iconNames.map(name => `Icon${name}`));
 
 const handleSelect = async (item) => {
     switch (item) {
-        case 'profile':
-            // 调用查看用户资料的方法
-            viewProfile();
-            break;
-        case 'editProfile':
-            // 调用编辑用户资料的方法
-            editProfile();
+        case 'userProfile':
+            router.push('/setting');
             break;
         case 'logout':
             // 调用退出登录的方法

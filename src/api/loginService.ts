@@ -10,6 +10,9 @@ class LoginService {
   register(data) {
     return http.post("/user/register", data);
   }
+  updatedUserInfo(id, data) {
+    return http.put(`/user/${id}`, data);
+  }
 }
 
 export default new LoginService();
