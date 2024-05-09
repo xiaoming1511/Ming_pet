@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <el-form :model="form" label-width="auto" style="max-width: 600px" class='ml-32'>
+    <div class="flex flex-col ml-32">
+        <el-form :model="form" label-width="auto" style="max-width: 600px">
             <el-form-item label="Avatar">
                 <el-upload class="avatar-uploader" :http-request="customRequest" :show-file-list="false"
                     :before-upload="beforeAvatarUpload">

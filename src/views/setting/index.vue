@@ -15,28 +15,20 @@
                         <el-avatar :src="userStore.userInfo.avatar" />
                         <span> {{ userStore.userInfo.nickName }} </span>
                     </div>
-                    <el-menu-item index="2">
+                    <el-menu-item index="2" @click="switchComponent(userInfo, '个人信息')">
                         <el-icon><icon-menu /></el-icon>
-                        <span>Navigator Two</span>
+                        <span>个人信息</span>
                     </el-menu-item>
-                    <el-menu-item index="3">
+                    <el-menu-item index="3" @click="switchComponent(systemSetting, '安全日志')">
                         <el-icon>
                             <document />
                         </el-icon>
-                        <span>Navigator Three</span>
-                    </el-menu-item>
-                    <el-menu-item index="4">
-                        <el-icon>
-                            <setting />
-                        </el-icon>
-                        <span>Navigator Four</span>
+                        <span>安全日志</span>
                     </el-menu-item>
                 </el-menu>
             </n-layout-sider>
             <n-layout>
-                <h3>个人中心</h3>
-                <n-button @click="switchComponent(userInfo)">User Info</n-button>
-                <n-button @click="switchComponent(systemSetting)">System Setting</n-button>
+                <h3 class="text-2xl mx-32 text-left py7">{{ currentTitle }}</h3>
                 <component :is="currentComponent" class="flex h10"></component>
             </n-layout>
         </n-layout>
@@ -58,10 +50,12 @@ import {
 const userStore = useUserStore()
 const router = useRouter();
 const currentComponent = shallowRef(userInfo);
+const currentTitle = ref('个人信息'); // 默认标题
 
-const switchComponent = (componentName: string) => {
-    currentComponent.value = componentName;
-};
+const switchComponent = (component, title: string) => {
+    currentComponent.value = component;
+    currentTitle.value = title;
+}
 
 const geHome = () => {
     router.push('/home');
