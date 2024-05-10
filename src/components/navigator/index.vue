@@ -1,9 +1,10 @@
 <template>
     <div class="flex w-full justify-between items-center h-16 bg-white px-10">
         <n-space>
-            <n-switch v-model:value="sidebarStore.isSidebarExpanded">
+            <n-switch v-model:value="sidebarStore.isSidebarExpanded"
+                v-if="responsiveBreakpoint !== 'sm' && responsiveBreakpoint !== 'xs'">
                 <template #icon>
-                    <n-icon size="20">
+                    <n-icon size=" 20">
                         <IconSwitch
                             :class="{ 'rotate-clockwise-animation': sidebarStore.isSidebarExpanded, 'rotate-anticlockwise-animation': !sidebarStore.isSidebarExpanded }">
                         </IconSwitch>
@@ -13,8 +14,8 @@
             <h3 class="text-base">{{ userStore.userInfo && userStore.userInfo.username }}，欢迎使用宠易萌宠物管理系统！</h3>
         </n-space>
         <n-space class="items-center">
-            <n-button quaternary circle v-for="(item, index) in Icons" :focusable="false"
-                @click="handleIconClick(item)">
+            <n-button quaternary circle v-for="(item, index) in Icons" :focusable="false" @click="handleIconClick(item)"
+                v-if="responsiveBreakpoint !== 'sm' && responsiveBreakpoint !== 'xs'">
                 <template #icon>
                     <!-- 使用 v-if 来判断是否为第二个图标（index为1） -->
                     <template v-if="index === 1">
@@ -43,6 +44,7 @@ import { useUserStore } from '@/stores/modules/user';
 import { usePublicStore } from '@/stores/public';
 import { useRouter } from 'vue-router';
 import { NButton, NAvatar } from 'naive-ui'
+import { useResponsiveBreakpoint } from '@/composables/useResponsiveBreakpoint';
 
 const router = useRouter()
 const message = useMessage()
@@ -52,6 +54,7 @@ const sidebarStore = useSidebarStore();
 
 const iconNames = ['Search', 'Xinxi', 'Cart'];
 const Icons = computed(() => iconNames.map(name => `Icon${name}`));
+const { responsiveBreakpoint, updateBreakpoint } = useResponsiveBreakpoint();
 
 const handleSelect = async (item) => {
     switch (item) {
@@ -94,7 +97,7 @@ const onMessageClick = () => {
                 NButton,
                 {
                     text: true,
-                    type: 'primary', 
+                    type: 'primary',
                     onClick: () => {
                         markAsRead = true
                         n.destroy()
@@ -127,6 +130,8 @@ const handleIconClick = (iconName: string) => {
         console.warn(`No click handler for icon: ${iconName}`);
     }
 };
+
+
 </script>
 
 <style lang="scss" scoped>

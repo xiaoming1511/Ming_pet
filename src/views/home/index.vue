@@ -16,8 +16,12 @@
 
 <script setup lang="ts">
 import { useSidebarStore } from '@/stores/modules/sidebar';
+import { useResponsiveBreakpoint } from '@/composables/useResponsiveBreakpoint';
 
 const sidebarStore = useSidebarStore();
+
+// 初始获取响应式断点值
+const { responsiveBreakpoint, updateBreakpoint } = useResponsiveBreakpoint();
 
 const marginLeft = computed(() => sidebarStore.isSidebarExpanded ? '64px' : '210px');
 const mainStyle = computed(() => ({
@@ -25,13 +29,12 @@ const mainStyle = computed(() => ({
 }));
 
 const navigatorStyle = computed(() => ({
-    marginLeft: marginLeft.value,
-    width: `calc(100vw - ${marginLeft.value})`,
+    marginLeft: (responsiveBreakpoint.value === 'sm' || responsiveBreakpoint.value === 'xs') ? '0px' : marginLeft.value,
+    width: (responsiveBreakpoint.value === 'sm' || responsiveBreakpoint.value === 'xs') ? '100vw' : `calc(100vw - ${marginLeft.value})`,
 }));
 
 const viewStyle = computed(() => ({
-    marginLeft: marginLeft.value,
-    width: `calc(100vw - ${marginLeft.value})`,
+    width: (responsiveBreakpoint.value === 'sm' || responsiveBreakpoint.value === 'xs') ? '100vw' : `calc(100vw - ${marginLeft.value})`,
     top: '64px',
     height: 'calc(100vh - 64px)',
     overflow: 'auto'

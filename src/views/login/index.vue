@@ -85,6 +85,7 @@
                         <n-button class="switch_button button switch-btn" type="info">
                             SIGN IN
                         </n-button>
+                        <p class="switch_description description">账号：admin 密码：123456</p>
                     </div>
 
                     <div class="switch_container is-hidden" id="switch-c2">

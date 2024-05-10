@@ -1,8 +1,8 @@
 <template>
     <div>
         <n-flex class="box p5" justify="space-around" size="large">
-            <n-card class="rounded-xl" size="huge">
-                <div class="panle">
+            <n-card class="rounded-xl panle <xl:hidden" size="huge">
+                <div>
                     <div class="panle_title text-left pb-3">
                         快捷入口
                     </div>
@@ -65,4 +65,6 @@ const panle = [
 ]
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+
+</style>
